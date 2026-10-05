@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daily Quiz</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%E2%9D%93</text></svg>">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --panel: #ffffff;
+    --panel-alt: #f0ede5;
+    --border: #d8d3c7;
+    --text: #232323;
+    --dim: #5f5f5f;
+    --accent: #b5772e;
+    --accent-ink: #ffffff;
+    --accent-dim: #ecd9bb;
+    --good: #2f6f3e;
+    --good-bg: #e4f1e6;
+    --soft: #e9eef3;
+    --soft-border: #b8c5d3;
+    --font: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1b19;
+      --panel: #272521;
+      --panel-alt: #322f2a;
+      --border: #47433b;
+      --text: #ece8df;
+      --dim: #aaa497;
+      --accent: #d9a05b;
+      --accent-ink: #1c1b19;
+      --accent-dim: #4a3c27;
+      --good: #8fd09c;
+      --good-bg: #233a28;
+      --soft: #2b3440;
+      --soft-border: #4b5b70;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { overflow-x: hidden; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 18px;
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+  }
+  header.top {
+    background: var(--panel);
+    border-bottom: 2px solid var(--border);
+    padding: 10px 12px 0;
+    position: sticky; top: 0; z-index: 5;
+  }
+  header.top h1 { margin: 0 0 6px; font-size: 22px; letter-spacing: .3px; }
+  header.top h1 span { color: var(--accent); }
+  nav { display: flex; gap: 2px; margin: 0 -4px; }
+  nav button {
+    flex: 1 1 0; min-width: 0; min-height: 46px; padding: 6px 2px;
+    background: none; border: none; border-bottom: 3px solid transparent;
+    color: var(--dim); font: inherit; font-size: 15px; cursor: pointer;
+  }
+  nav button.on { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+  main { max-width: 640px; margin: 0 auto; padding: 12px 12px 90px; }
+  h2 { font-size: 21px; margin: 6px 0 10px; }
+  h3 { font-size: 18px; margin: 14px 0 6px; }
+  p { margin: 8px 0; overflow-wrap: anywhere; }
+  .dim { color: var(--dim); }
+  .small { font-size: 15px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px; margin: 12px 0;
+  }
+  .card.callout { background: var(--accent-dim); border-color: var(--accent); }
+  .card.soft { background: var(--soft); border-color: var(--soft-border); }
+  section.card { scroll-margin-top: 110px; }
+  .qmeta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 4px 8px; font-size: 14px; color: var(--dim); }
+  .qtext { font-size: 20px; font-weight: 600; margin: 8px 0 12px; overflow-wrap: anywhere; }
+  .btn {
+    display: inline-block; min-height: 48px; padding: 10px 16px; margin: 4px 6px 4px 0;
+    font: inherit; font-size: 17px; cursor: pointer;
+    border-radius: 10px; border: 1px solid var(--border); background: var(--panel); color: var(--text);
+  }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  .btn.ghost { background: none; color: var(--accent); border-color: var(--accent); }
+  .btn.link { background: none; border: none; color: var(--accent); padding: 8px 6px; min-height: 44px; text-decoration: underline; }
+  .btn.small { min-height: 40px; padding: 6px 12px; font-size: 15px; }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .btn.wide { width: 100%; margin-right: 0; }
+  .opt {
+    display: block; width: 100%; min-height: 52px; text-align: left; margin: 8px 0;
+    padding: 12px 14px; font: inherit; font-size: 18px; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 10px; background: var(--panel); color: var(--text);
+    overflow-wrap: anywhere;
+  }
+  .opt .tag { display: block; font-size: 13px; color: var(--dim); }
+  .opt.correct { background: var(--good-bg); border-color: var(--good); }
+  .opt.correct .tag { color: var(--good); }
+  .opt.chosen { background: var(--soft); border-color: var(--soft-border); }
+  .opt.off { cursor: default; opacity: .85; }
+  .fb { border-top: 1px dashed var(--border); margin-top: 10px; padding-top: 6px; }
+  .verdict { font-weight: 700; font-size: 19px; }
+  .worth { background: var(--panel-alt); border-radius: 8px; padding: 8px 10px; }
+  ul.src { list-style: none; margin: 4px 0; padding: 0; }
+  ul.src li { margin: 0; }
+  ul.src a { display: block; padding: 10px 4px; color: var(--accent); overflow-wrap: anywhere; }
+  .chips button {
+    min-height: 44px; margin: 4px 6px 4px 0; padding: 6px 14px; border-radius: 22px;
+    font: inherit; font-size: 16px; border: 1px solid var(--border); background: var(--panel); color: var(--text); cursor: pointer;
+  }
+  .chips button.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  textarea, input[type=text], input[type=password] {
+    width: 100%; font: inherit; font-size: 17px; padding: 10px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text);
+  }
+  textarea { min-height: 80px; }
+  .row { display: flex; flex-wrap: wrap; align-items: center; }
+  .spacer { flex: 1; }
+  .badge { display: inline-block; font-size: 13px; background: var(--accent); color: var(--accent-ink); border-radius: 10px; padding: 0 7px; margin-left: 3px; }
+  .spin {
+    width: 42px; height: 42px; margin: 12px auto; border-radius: 50%;
+    border: 5px solid var(--accent-dim); border-top-color: var(--accent); animation: sp 1s linear infinite;
+  }
+  @keyframes sp { to { transform: rotate(360deg); } }
+  .center { text-align: center; }
+  pre.exp { white-space: pre-wrap; overflow-wrap: anywhere; font: 14px/1.4 Consolas, monospace; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; max-height: 360px; overflow: auto; }
+  details > summary { cursor: pointer; padding: 8px 0; min-height: 44px; }
+  .score { font-size: 28px; font-weight: 700; }
+  .res { display: inline-block; font-size: 13px; border-radius: 10px; padding: 0 8px; border: 1px solid var(--border); color: var(--dim); }
+  .res.right { color: var(--good); border-color: var(--good); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+  .modalback { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 20; display: flex; align-items: flex-end; justify-content: center; }
+  .modalbox { background: var(--panel); width: 100%; max-width: 640px; max-height: 90vh; overflow: auto; border-radius: 16px 16px 0 0; padding: 16px; }
+  @media (min-width: 700px) { .modalback { align-items: center; } .modalbox { border-radius: 16px; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Daily <span>Quiz</span></h1>
+  <nav id="nav"></nav>
+</header>
+<main id="app"></main>
+<div id="modal"></div>
+
+<script src="questions-bank.js"></script>
+<script>
+(function () {
+"use strict";
+
+/* =========================================================================
+   SETTINGS YOU MIGHT WANT TO CHANGE
+   ========================================================================= */
+const APP_VERSION = "1.0";
+const STORE_KEY = "dailyQuiz.v1";         // everything the quiz remembers EXCEPT the API key
+const KEY_STORE = "dailyQuiz.apiKey";     // the API key lives alone, here. Never in a backup or export.
+const BANK_TARGET = 30;                   // unused bank questions we try to keep ready
+const SESSION_SIZE = 10;
+const AVOID_COUNT = 100;                  // recent fingerprints sent to the AI as "avoid these"
+const TZ = "Australia/Melbourne";
+const USD_TO_AUD = 1.55;                  // rough, for the spend guide only
+const MONTHLY_CAP_AUD = 10;               // your real limit is set in your Perplexity account
+const NEAR_CAP = 0.8;                     // skip top-ups at this share of the cap
+const CALL_TIMEOUT_MS = 300000;
+
+/* =========================================================================
+   THE ONE PLACE THAT TALKS TO THE AI PROVIDER
+   To swap provider later (for example to Anthropic with web search turned on),
+   change AI.call() and readResponse() only. Nothing else knows about Perplexity.
+   ========================================================================= */
+const AI = {
+  endpoint: "https://api.perplexity.ai/v1/agent",
+  model: "openai/gpt-6-luna",            // chosen after the round-two tests, see TEST-RESULTS.md
+  searchContext: "medium",
+  maxSteps: 20,
+  async call({ prompt, schemaName, schema, signal }) {
+    const key = getKey();
+    if (!key) throw mkErr("key", "No key");
+    const body = {
+      model: this.model,
+      input: prompt,
+      tools: [{ type: "web_search", search_context_size: this.searchContext }],
+      response_format: { type: "json_schema", json_schema: { name: schemaName, schema: schema } },
+      max_output_tokens: 12000,
+      max_steps: this.maxSteps
+    };
+    const ctl = new AbortController();
+    const onAbort = () => ctl.abort();
+    if (signal) { if (signal.aborted) ctl.abort(); else signal.addEventListener("abort", onAbort); }
+    const timer = setTimeout(() => ctl.abort(), CALL_TIMEOUT_MS);
+    let res, text;
+    try {
+      res = await fetch(this.endpoint, {
+        method: "POST", signal: ctl.signal,
+        headers: { "Authorization": "Bearer " + key, "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      text = await res.text();
+    } catch (e) {
+      if (signal && signal.aborted) throw mkErr("cancelled", "Cancelled");
+      if (e && e.name === "AbortError") throw mkErr("timeout", "The AI took too long to answer.");
+      throw mkErr("network", "Couldn't reach the AI. Check your internet connection.");
+    } finally {
+      clearTimeout(timer);
+      if (signal) signal.removeEventListener("abort", onAbort);
+    }
+    if (res.status === 401 || res.status === 403) throw mkErr("key", "Perplexity didn't accept the key.");
+    if (res.status === 402 || res.status === 429) throw mkErr("limit", "Perplexity says the account is out of credit or too busy.");
+    if (!res.ok) throw mkErr("server", "Perplexity had a problem (error " + res.status + ").");
+    let data = null;
+    try { data = JSON.parse(text); } catch (e) {}
+    if (!data) throw mkErr("format", "The AI's answer couldn't be read.");
+    const info = readResponse(data);
+    recordSpend(info.usd);
+    return info;
+  }
+};
+function mkErr(kind, message) { const e = new Error(message); e.kind = kind; return e; }
+
+// Pulls the answer text, the REAL web pages it found, and the cost out of a response.
+function readResponse(data) {
+  const out = { text: data.output_text || "", results: [], usd: 0 };
+  const items = Array.isArray(data.output) ? data.output : [];
+  items.forEach(it => {
+    if (it.type === "search_results" && Array.isArray(it.results)) out.results.push(...it.results);
+    if (!out.text && it.type === "message" && Array.isArray(it.content)) out.text += it.content.map(c => c.text || "").join("");
+  });
+  if (Array.isArray(data.search_results)) out.results.push(...data.search_results);
+  const c = data.usage && data.usage.cost;
+  out.usd = (c && Number(c.total_cost)) || 0;
+  return out;
+}
+
+/* =========================================================================
+   TOPICS AND PROMPTS
+   ========================================================================= */
+const TOPICS = ["History", "Geography and places", "Space, physics and chemistry", "Nature and animals", "The human body and health", "Technology and computing", "Maths, logic and puzzles", "Music", "Film and TV", "Books, words and language", "Art, design and architecture", "Food and drink", "Sport", "Politics, law and government", "Money, business and economics", "Philosophy, religion and ideas", "Myths, legends and folklore", "Inventions and how things work", "Famous people and biography", "Travel and cultures", "Internet and pop culture"];
+const RARE_TOPICS = ["Art, design and architecture", "Sport"];
+const TOPIC_LIST_TEXT = TOPICS.map(t => RARE_TOPICS.includes(t) ? t + " (RARER than the others)" : t).join("; ");
+
+const FORMAT_RULES = `
+For EVERY question give: topic (broad topic exactly as listed, then " > " and a sub-topic, e.g. "History > Australian"), question, options (exactly four strings, exactly one correct), correct (the exact text of the correct option), explanation (2 to 3 short lines), extra_fact (one "worth knowing" line), sources (2 or 3 items, each {site, url}), fingerprint (a short phrase naming the topic plus the one key fact tested).
+SOURCES: use web search. Every url in sources MUST be a page that appeared in your web search results and that actually states the answer. Free-to-read pages only (for example Wikipedia, ABC, Museums Victoria, Trove, CSIRO, NASA, Britannica free pages). Never write a URL from memory.
+Audience: a curious adult, not an expert (music theory may be intermediate or advanced). Lean towards less familiar corners; avoid the most obvious trivia. Include Australian angles where they fit. Australian spelling. Plain English.
+Accuracy matters more than anything else. If a fact would have to be stretched, use a different question.
+HOW TO WORK: run a SEPARATE web search for EACH question, on that question's own subject (at least 10 different searches). Every question must be about a DIFFERENT subject: never two questions about the same person, place, object, event or fact, even from a different angle. Do not write questions that begin "According to [website]". Each question's sources must be pages found by the search you ran for it: 2 or 3 pages, ideally from 2 DIFFERENT websites, each stating the answer.
+Mix topics so no more than 2 questions share a broad topic. Art and sport come up less often than the others.`;
+
+function avoidText(list) { return list.length ? list.map(s => "- " + s).join("\n") : "(none)"; }
+
+function promptLive(count, avoid) {
+  return `You are writing a multiple-choice quiz that has a hidden theme.
+STEP 1: choose a SPECIFIC theme that can link facts from very different topics: a particular year, a number, a country, a person's name, or a single word. Not a vague category. Put it in "theme" (a few words only), and in "theme_explanation" say in one line how the questions connect.
+STEP 2: write ${count} candidate questions that each contain a real, checked fact connected to the theme. For each, "theme_link" says in one short line how it connects. Accuracy beats the theme: if a fact would have to be stretched to fit, use a different question.
+Topics available: ${TOPIC_LIST_TEXT}.
+${FORMAT_RULES}
+Do NOT ask about any of these (already asked):
+${avoidText(avoid)}
+Return only JSON matching the schema.`;
+}
+function promptMore(theme, count, avoid) {
+  return `You are adding replacement questions to a multiple-choice quiz whose hidden theme is: ${theme}.
+Write ${count} more candidate questions that each contain a real, checked fact connected to that theme. For each, "theme_link" says in one short line how it connects. Accuracy beats the theme.
+Topics available: ${TOPIC_LIST_TEXT}.
+${FORMAT_RULES}
+Do NOT ask about any of these (already asked or already chosen):
+${avoidText(avoid)}
+Return only JSON matching the schema.`;
+}
+function promptBank(count, avoid) {
+  return `You are writing ${count} multiple-choice questions for a question bank (no single theme for the batch).
+Topics available: ${TOPIC_LIST_TEXT}.
+${FORMAT_RULES}
+ALSO give each question "tags": at least 3 theme tags such as a year, country, person, number or keyword. Choose tags that several questions could share where the facts allow, but never bend a fact to fit a tag.
+Do NOT ask about any of these (already asked or already in the bank):
+${avoidText(avoid)}
+Return only JSON matching the schema.`;
+}
+
+const QFIELDS = {
+  topic: { type: "string" }, question: { type: "string" },
+  options: { type: "array", items: { type: "string" } },
+  correct: { type: "string" }, explanation: { type: "string" }, extra_fact: { type: "string" },
+  sources: { type: "array", items: { type: "object", properties: { site: { type: "string" }, url: { type: "string" } }, required: ["site", "url"] } },
+  fingerprint: { type: "string" }
+};
+function qSchema(extra) {
+  const f = Object.assign({}, QFIELDS, extra || {});
+  return { type: "array", items: { type: "object", properties: f, required: Object.keys(f) } };
+}
+function schemaLive() {
+  return { type: "object", properties: { theme: { type: "string" }, theme_explanation: { type: "string" }, questions: qSchema({ theme_link: { type: "string" } }) }, required: ["theme", "theme_explanation", "questions"] };
+}
+function schemaMore() { return { type: "object", properties: { questions: qSchema({ theme_link: { type: "string" } }) }, required: ["questions"] }; }
+function schemaBank() { return { type: "object", properties: { questions: qSchema({ tags: { type: "array", items: { type: "string" } } }) }, required: ["questions"] }; }
+
+/* =========================================================================
+   SMALL HELPERS
+   ========================================================================= */
+const $ = (sel, root) => (root || document).querySelector(sel);
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function nowIso() { return new Date().toISOString(); }
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function fmtDate(iso) { try { return new Intl.DateTimeFormat("en-AU", { timeZone: TZ, day: "numeric", month: "short", year: "numeric" }).format(new Date(iso)); } catch (e) { return String(iso).slice(0, 10); } }
+function fmtDateTime(iso) { try { return new Intl.DateTimeFormat("en-AU", { timeZone: TZ, day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true }).format(new Date(iso)) + " (Melbourne time)"; } catch (e) { return String(iso); } }
+function monthKey() { const p = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit" }).format(new Date()); return p.slice(0, 7); }
+function safeUrl(u) { try { const x = new URL(String(u)); return (x.protocol === "http:" || x.protocol === "https:") ? x.href : ""; } catch (e) { return ""; } }
+function normUrl(u) { try { const x = new URL(String(u).trim()); return (x.hostname.replace(/^www\./, "") + x.pathname.replace(/\/+$/, "") + x.search).toLowerCase(); } catch (e) { return String(u || "").trim().toLowerCase(); } }
+function hostOf(u) { return normUrl(u).split("/")[0]; }
+function broadTopic(t) { return String(t || "").split(">")[0].trim(); }
+function isRare(t) { return RARE_TOPICS.includes(broadTopic(t)); }
+
+/* =========================================================================
+   STORAGE
+   ========================================================================= */
+function blank() { return { v: 1, seen: [], asked: {}, sessions: [], currentId: null, flags: {}, saved: {}, topup: [], waiting: null, lastTopup: null, spend: {}, prepFailAt: null, topupFailAt: null }; }
+const U = { pastOpen: {}, tab: "quiz", starting: false, notice: null, needKey: false, noQuestions: false, flag: null, exportText: null, bgRunning: false, prepPromise: null, ctl: null, loadStart: 0, saveError: false, corrupt: false, keyMsg: "" };
+
+function load() {
+  let raw = null;
+  try { raw = localStorage.getItem(STORE_KEY); } catch (e) {}
+  if (!raw) return blank();
+  try { return Object.assign(blank(), JSON.parse(raw)); }
+  catch (e) {
+    // Don't throw the data away: keep the unreadable copy so it can be rescued.
+    try { localStorage.setItem(STORE_KEY + ".unreadable", raw); } catch (e2) {}
+    U.corrupt = true; return blank();
+  }
+}
+let S = load();
+
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); U.saveError = false; return true; }
+  catch (e) {
+    compactSessions(60);
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); U.saveError = false; return true; } catch (e2) { U.saveError = true; return false; }
+  }
+}
+// Old sessions keep only what you need to follow up: question, answer, sources.
+function compactSessions(keepFull) {
+  const list = S.sessions.slice().sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1));
+  list.slice(keepFull).forEach(s => {
+    if (s.compact || s.id === S.currentId) return;
+    s.questions = s.questions.map(q => ({ id: q.id, topic: q.topic, question: q.question, correct: q.correct, sources: q.sources, fingerprint: q.fingerprint, options: [q.correct] }));
+    s.compact = true;
+  });
+}
+
+function getKey() { try { return localStorage.getItem(KEY_STORE) || ""; } catch (e) { return ""; } }
+function setKey(v) { try { localStorage.setItem(KEY_STORE, v); return true; } catch (e) { return false; } }
+function forgetKey() { try { localStorage.removeItem(KEY_STORE); } catch (e) {} }
+
+/* =========================================================================
+   SPEND GUIDE (an estimate only)
+   ========================================================================= */
+function recordSpend(usd) { if (!usd) return; const m = monthKey(); S.spend[m] = (S.spend[m] || 0) + usd; save(); }
+function spendAud() { return (S.spend[monthKey()] || 0) * USD_TO_AUD; }
+function overCap() { return spendAud() >= MONTHLY_CAP_AUD; }
+function nearCap() { return spendAud() >= MONTHLY_CAP_AUD * NEAR_CAP; }
+function canRemote() { return !!getKey() && navigator.onLine !== false && !overCap(); }
+
+/* =========================================================================
+   FINGERPRINTS AND NO-REPEAT CHECKS
+   NOTE (honest limit): this catches MOST repeats, not all. It compares a short
+   phrase naming the topic and key fact. The same fact written in very different
+   words can slip through. The Flag button (reason "Repeat") covers the rest.
+   ========================================================================= */
+const STOP = new Set("the a an of in on at to and or for from with by is was were are as it its this that which who what how why when where".split(" "));
+function fpNorm(s) { return String(s || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+function fpTokens(s) { return new Set(fpNorm(s).split(" ").filter(w => w.length > 1 && !STOP.has(w))); }
+function jaccard(a, b) { if (!a.size || !b.size) return 0; let n = 0; a.forEach(w => { if (b.has(w)) n++; }); return n / (a.size + b.size - n); }
+function fpMatch(a, b, th) {
+  const na = fpNorm(a), nb = fpNorm(b);
+  if (!na || !nb) return false;
+  if (na === nb) return true;
+  const ta = fpTokens(a), tb = fpTokens(b);
+  return ta.size >= 3 && tb.size >= 3 && jaccard(ta, tb) >= (th || 0.6);
+}
+function markSeen(q) { S.seen.push({ fp: q.fingerprint, n: fpNorm(q.fingerprint), qid: q.id, at: nowIso() }); }
+const tokCache = new WeakMap();
+function entryTokens(e) { let t = tokCache.get(e); if (!t) { t = fpTokens(e.fp); tokCache.set(e, t); } return t; }
+function isSeenFp(fp, exceptQid) {
+  const n = fpNorm(fp); if (!n) return false;
+  const ta = fpTokens(fp);
+  return S.seen.some(e => e.qid !== exceptQid && (e.n === n || (ta.size >= 3 && entryTokens(e).size >= 3 && jaccard(ta, entryTokens(e)) >= 0.6)));
+}
+function recentFps() { return S.seen.slice(-AVOID_COUNT).map(e => e.fp); }
+
+// Within one batch we are stricter: same subject even if worded differently.
+const NOUN_STOP = new Set(["australia", "australian", "australias", "history", "geography", "which", "what", "who", "whom", "whose", "where", "when", "why", "how", "according", "many", "much", "strictly", "speaking", "name", "the", "these", "those", "there"]);
+// Capitalised words (likely names) in a question, ignoring its first word and common question words.
+function properNouns(s) { const m = String(s || "").match(/\b[A-Z][a-zĀ-ſ]{3,}\b/g) || []; return new Set(m.map(x => x.toLowerCase()).filter(x => !NOUN_STOP.has(x) && !STOP.has(x))); }
+function nounsOf(q) { return properNouns(String(q.question || "").replace(/^\S+\s+/, "") + " " + String(q.correct || "")); }
+function sameSubject(a, b) {
+  if (jaccard(fpTokens(a.fingerprint), fpTokens(b.fingerprint)) >= 0.34) return true;
+  const pa = nounsOf(a), pb = nounsOf(b);
+  let n = 0; pa.forEach(w => { if (pb.has(w)) n++; });
+  return n >= 2;
+}
+
+/* =========================================================================
+   THE BANK (starter file + AI top-up questions kept in this browser)
+   ========================================================================= */
+function starterBank() { return (window.QUIZ_STARTER_BANK || []).map(q => Object.assign({ origin: "starter" }, q)); }
+function allBank() { return starterBank().concat(S.topup.map(q => Object.assign({ origin: "topup" }, q))); }
+function bankIsUnused(q) {
+  if (S.asked[q.id] || S.flags[q.id]) return false;
+  if (isSeenFp(q.fingerprint, q.id)) return false;          // same fact already asked another way
+  return true;
+}
+function unusedBank() { return allBank().filter(bankIsUnused); }
+function bankLevel() { return Math.min(unusedBank().length, BANK_TARGET); }
+
+/* Picks `want` questions from a pool, respecting: max 2 per broad topic, art and
+   sport at most 1 each and chosen less often. Relaxes the limits only if it must. */
+function pickWithCaps(pool, want, chosen) {
+  chosen = chosen || [];
+  const weighted = pool.map(q => ({ q, k: Math.random() * (isRare(q.topic) ? 0.3 : 1) })).sort((a, b) => b.k - a.k).map(x => x.q);
+  const tryPass = (topicCap, rareCap) => {
+    for (const q of weighted) {
+      if (chosen.length >= want) break;
+      if (chosen.includes(q)) continue;
+      const b = broadTopic(q.topic);
+      const same = chosen.filter(c => broadTopic(c.topic) === b).length;
+      if (same >= (isRare(q.topic) ? rareCap : topicCap)) continue;
+      chosen.push(q);
+    }
+  };
+  tryPass(2, 1); if (chosen.length < want) tryPass(2, 2); if (chosen.length < want) tryPass(3, 3); if (chosen.length < want) tryPass(99, 99);
+  return chosen;
+}
+
+function makeBankSession() {
+  const pool = unusedBank();
+  if (pool.length < SESSION_SIZE) return null;
+  // Theme: the tag shared by the most unused questions; needs 5 or more.
+  const counts = {};
+  pool.forEach(q => (q.tags || []).forEach(t => { const k = String(t).trim().toLowerCase(); if (!counts[k]) counts[k] = { n: 0, label: t }; counts[k].n++; }));
+  const top = Object.values(counts).sort((a, b) => b.n - a.n);
+  let theme = null, fit = 0, chosen = [];
+  if (top.length && top[0].n >= 5) {
+    const best = top.filter(t => t.n === top[0].n); const pick = best[Math.floor(Math.random() * best.length)];
+    const key = String(pick.label).trim().toLowerCase();
+    const tagged = pool.filter(q => (q.tags || []).some(t => String(t).trim().toLowerCase() === key));
+    chosen = pickWithCaps(tagged, SESSION_SIZE, []);
+    fit = chosen.length; theme = pick.label;
+    if (chosen.length < SESSION_SIZE) chosen = pickWithCaps(pool.filter(q => !chosen.includes(q)), SESSION_SIZE, chosen);
+  } else {
+    chosen = pickWithCaps(pool, SESSION_SIZE, []);
+  }
+  if (chosen.length < SESSION_SIZE) return null;
+  const qs = shuffle(chosen).map(prepBankQuestion);
+  qs.forEach(q => { S.asked[q.id] = true; markSeen(q); });
+  return newSession({ source: "bank", theme: theme, themeNote: theme ? "Theme: " + theme + ", fits " + fit + " of " + SESSION_SIZE + "." : "", fit: theme ? fit : 0, questions: qs });
+}
+function prepBankQuestion(q) {
+  const c = JSON.parse(JSON.stringify(q)); delete c.origin;
+  c.options = shuffle(c.options);
+  return c;
+}
+function newSession(o) {
+  return { id: uid(), createdAt: nowIso(), source: o.source, theme: o.theme || null, themeNote: o.themeNote || "", fit: o.fit || 0,
+    questions: o.questions, answers: o.questions.map(() => null), shown: 1, stage: "playing", guess: "", themeResult: null };
+}
+
+/* =========================================================================
+   CHECKING WHAT THE AI SENDS BACK
+   ========================================================================= */
+const PAYWALLED = ["nytimes.com", "wsj.com", "ft.com", "theaustralian.com.au", "smh.com.au", "theage.com.au", "afr.com", "newyorker.com", "economist.com", "thetimes.co.uk", "telegraph.co.uk", "bloomberg.com", "washingtonpost.com", "jstor.org"];
+const SITE_NAMES = { "wikipedia.org": "Wikipedia", "britannica.com": "Britannica", "nasa.gov": "NASA", "abc.net.au": "ABC", "museumsvictoria.com.au": "Museums Victoria", "csiro.au": "CSIRO", "nma.gov.au": "National Museum of Australia", "nla.gov.au": "Trove / National Library", "bbc.com": "BBC", "bbc.co.uk": "BBC", "smithsonianmag.com": "Smithsonian Magazine", "si.edu": "Smithsonian", "nationalgeographic.com": "National Geographic", "history.com": "History.com", "parksaustralia.gov.au": "Parks Australia", "awm.gov.au": "Australian War Memorial", "nfsa.gov.au": "NFSA", "unesco.org": "UNESCO", "nature.com": "Nature", "healthdirect.gov.au": "Healthdirect" };
+function siteLabel(url, given) {
+  const h = hostOf(url);
+  for (const k of Object.keys(SITE_NAMES)) if (h === k || h.endsWith("." + k)) return SITE_NAMES[k];
+  const g = String(given || "").trim();
+  return (g && g.length <= 40) ? g : h;
+}
+function isPaywalled(url) { const h = hostOf(url); return PAYWALLED.some(p => h === p || h.endsWith("." + p)); }
+
+function parseJson(text) {
+  if (!text) return null;
+  const t = String(text).trim().replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+  try { return JSON.parse(t); } catch (e) {}
+  const a = t.indexOf("{"), b = t.lastIndexOf("}");
+  if (a >= 0 && b > a) { try { return JSON.parse(t.slice(a, b + 1)); } catch (e) {} }
+  return null;
+}
+function str(x) { return typeof x === "string" ? x.trim() : ""; }
+
+// Turns one raw AI question into a clean one, or null if it isn't good enough.
+function cleanQuestion(raw, realMap, needTags) {
+  if (!raw || typeof raw !== "object") return null;
+  const question = str(raw.question), explanation = str(raw.explanation), extra = str(raw.extra_fact), fp = str(raw.fingerprint);
+  let options = Array.isArray(raw.options) ? raw.options.map(str).filter(Boolean) : [];
+  if (options.length !== 4 || new Set(options.map(o => o.toLowerCase())).size !== 4) return null;
+  let correct = str(raw.correct);
+  let idx = options.findIndex(o => o === correct);
+  if (idx < 0) idx = options.findIndex(o => o.toLowerCase() === correct.toLowerCase());
+  if (idx < 0) return null;
+  correct = options[idx];
+  if (!question || !explanation || !extra || !fp) return null;
+  // Links: only pages that really came back from the web search, free to read, no repeats.
+  const srcs = []; const seenU = new Set();
+  (Array.isArray(raw.sources) ? raw.sources : []).forEach(s => {
+    const real = realMap.get(normUrl(s && s.url));
+    if (!real) return;
+    const url = safeUrl(real.url); if (!url || isPaywalled(url)) return;
+    const k = normUrl(url); if (seenU.has(k)) return; seenU.add(k);
+    srcs.push({ site: siteLabel(url, s.site), url: url });
+  });
+  if (srcs.length < 2) return null;
+  let tags = [];
+  if (needTags) {
+    tags = Array.isArray(raw.tags) ? raw.tags.map(str).filter(Boolean) : [];
+    tags = tags.filter((t, i) => tags.findIndex(u => u.toLowerCase() === t.toLowerCase()) === i);
+    if (tags.length < 3) return null;
+  }
+  let topic = str(raw.topic) || "General";
+  const bt = broadTopic(topic).toLowerCase();
+  const match = TOPICS.find(t => t.toLowerCase() === bt) || TOPICS.find(t => bt && (t.toLowerCase().startsWith(bt) || bt.startsWith(t.toLowerCase())));
+  if (match) topic = match + (topic.includes(">") ? " > " + topic.split(">").slice(1).join(">").trim() : "");
+  const q = { id: "g" + uid(), topic: topic, question: question, options: shuffle(options), correct: correct, explanation: explanation, extra_fact: extra, sources: srcs.slice(0, 3), fingerprint: fp };
+  if (needTags) q.tags = tags;
+  const link = str(raw.theme_link); if (link) q.theme_link = link;
+  return q;
+}
+function realMapOf(results) { const m = new Map(); (results || []).forEach(r => { if (r && r.url) m.set(normUrl(r.url), r); }); return m; }
+
+// Adds good new questions to `kept` (up to `limit`), skipping repeats of anything seen or in the bank.
+function acceptInto(kept, cands, limit, bankFps) {
+  const hosts = q => new Set(q.sources.map(s => hostOf(s.url))).size;
+  cands.slice().sort((a, b) => hosts(b) - hosts(a)).forEach(c => {
+    if (kept.length >= limit) return;
+    if (isSeenFp(c.fingerprint)) return;
+    if (bankFps.some(f => fpMatch(c.fingerprint, f))) return;
+    if (kept.some(k => sameSubject(k, c))) return;
+    const b = broadTopic(c.topic);
+    if (kept.filter(k => broadTopic(k.topic) === b).length >= (isRare(c.topic) ? 1 : 2)) return;
+    kept.push(c);
+  });
+}
+function bankFpList() { return allBank().filter(q => !S.flags[q.id]).map(q => q.fingerprint); }
+
+/* =========================================================================
+   MAKING SESSIONS: live AI first, bank as the fallback
+   ========================================================================= */
+async function generateLive(signal) {
+  const avoid = recentFps(), bankFps = bankFpList();
+  let theme = "", themeNote = "", kept = [], attempts = 0;
+  let prompt = promptLive(14, avoid), schema = schemaLive(), name = "quiz_session_v2";
+  while (attempts < 3 && kept.length < SESSION_SIZE) {
+    attempts++;
+    const r = await AI.call({ prompt, schemaName: name, schema, signal });
+    const data = parseJson(r.text);
+    if (!data || !Array.isArray(data.questions)) throw mkErr("format", "The AI's answer couldn't be read.");
+    if (attempts === 1) { theme = str(data.theme); themeNote = str(data.theme_explanation); if (!theme) throw mkErr("format", "The AI didn't give a theme."); }
+    const realMap = realMapOf(r.results);
+    const cands = data.questions.map(q => cleanQuestion(q, realMap, false)).filter(Boolean);
+    acceptInto(kept, cands, SESSION_SIZE, bankFps);
+    if (kept.length < SESSION_SIZE) {
+      prompt = promptMore(theme, SESSION_SIZE - kept.length + 4, avoid.concat(kept.map(k => k.fingerprint)));
+      schema = schemaMore(); name = "quiz_more_v2";
+    }
+  }
+  return { theme, themeNote, kept };
+}
+
+// Turns a live result into a session. If the AI gave fewer than 10 good questions, fills from the bank.
+function sessionFromLive(res) {
+  if (!res.kept.length) return null;
+  let qs = res.kept.slice(), source = "live", fit = qs.length;
+  if (qs.length < SESSION_SIZE) {
+    const filler = pickWithCaps(unusedBank(), SESSION_SIZE, []).slice(0, SESSION_SIZE - qs.length).map(prepBankQuestion);
+    if (qs.length + filler.length < SESSION_SIZE) return null;
+    filler.forEach(q => { S.asked[q.id] = true; });
+    qs = qs.concat(filler); source = "mixed";
+  }
+  qs = shuffle(qs);
+  qs.forEach(markSeen);
+  const note = res.themeNote + (source === "mixed" ? " (The theme fits " + fit + " of " + SESSION_SIZE + "; the rest came from the question bank.)" : "");
+  return newSession({ source, theme: res.theme, themeNote: note, fit, questions: qs });
+}
+
+function coolingDown(stamp) { return stamp && (Date.now() - new Date(stamp).getTime()) < 30 * 60 * 1000; }
+async function prepareWaiting() {
+  if (S.waiting || !canRemote() || coolingDown(S.prepFailAt)) return;
+  const p = (async () => {
+    const res = await generateLive(null);
+    const sess = sessionFromLive(res);
+    if (sess) { S.waiting = sess; S.prepFailAt = null; save(); }
+    else { S.prepFailAt = nowIso(); save(); }
+  })();
+  U.prepPromise = p;
+  try { await p; } catch (e) { S.prepFailAt = nowIso(); save(); throw e; } finally { U.prepPromise = null; }
+}
+
+async function runTopup() {
+  if (!canRemote() || nearCap() || coolingDown(S.topupFailAt)) return;
+  let guard = 0;
+  while (unusedBank().length < BANK_TARGET && guard++ < 3) {
+    const need = BANK_TARGET - unusedBank().length, n = Math.min(10, need);
+    const avoid = recentFps().concat(unusedBank().map(q => q.fingerprint));
+    const r = await AI.call({ prompt: promptBank(n + 3, avoid), schemaName: "bank_batch_v2", schema: schemaBank(), signal: null });
+    const data = parseJson(r.text);
+    if (!data || !Array.isArray(data.questions)) { S.topupFailAt = nowIso(); save(); return; }
+    const realMap = realMapOf(r.results);
+    const cands = data.questions.map(q => cleanQuestion(q, realMap, true)).filter(Boolean);
+    const kept = [], bankFps = bankFpList();
+    acceptInto(kept, cands, n, bankFps);
+    if (!kept.length) { S.topupFailAt = nowIso(); save(); return; }
+    S.topup.push(...kept); S.lastTopup = nowIso(); S.topupFailAt = null; save();   // saved the moment they are written
+  }
+}
+
+// Runs quietly after the quiz is on screen. Never blocks a quiz, never shows errors.
+async function background() {
+  if (U.bgRunning || U.starting) return;
+  U.bgRunning = true;
+  try { await prepareWaiting(); } catch (e) {}
+  try { await runTopup(); } catch (e) { S.topupFailAt = nowIso(); save(); }
+  U.bgRunning = false;
+  if (U.tab === "settings" || (U.tab === "quiz" && !curSession() && !U.starting)) render();
+}
+function scheduleBackground() { setTimeout(background, 1500); }
+
+/* =========================================================================
+   STARTING A SESSION
+   ========================================================================= */
+function curSession() { return S.sessions.find(s => s.id === S.currentId) || null; }
+
+async function startSession(forceBank) {
+  if (U.starting) return;
+  if (!forceBank && !getKey()) { U.needKey = true; U.noQuestions = false; render(); return; }
+  U.starting = true; U.notice = null; U.needKey = false; U.noQuestions = false; U.flag = null;
+  U.loadStart = Date.now(); U.ctl = new AbortController();
+  render();
+  const tick = setInterval(() => { const el = $("#elapsed"); if (el) el.textContent = Math.round((Date.now() - U.loadStart) / 1000); }, 1000);
+  let sess = null, why = "";
+  try {
+    if (!forceBank) {
+      if (!S.waiting && U.prepPromise) {
+        const ctl = U.ctl;
+        await Promise.race([U.prepPromise.catch(() => {}), new Promise(res => ctl.signal.addEventListener("abort", res))]);
+      }
+      if (U.ctl.signal.aborted) why = "";
+      else if (S.waiting) { sess = S.waiting; S.waiting = null; sess.createdAt = nowIso(); }
+      else if (navigator.onLine === false) why = "You're offline.";
+      else if (overCap()) why = "The spend guide says you've reached this month's limit.";
+      else {
+        try { sess = sessionFromLive(await generateLive(U.ctl.signal)); if (!sess) why = "The AI couldn't write ten new questions that passed the checks."; }
+        catch (e) { why = e.kind === "cancelled" ? "" : e.message; }
+      }
+    }
+    if (!sess) {
+      sess = makeBankSession();
+      if (sess && why) U.notice = "New AI questions weren't available (" + why + ") so this session uses the question bank.";
+      if (!sess) U.noQuestions = true;
+    }
+    if (sess) { S.sessions.push(sess); S.currentId = sess.id; save(); }
+  } finally {
+    clearInterval(tick); U.starting = false; U.ctl = null;
+    render(); window.scrollTo(0, 0); scheduleBackground();
+  }
+}
+
+/* =========================================================================
+   ANSWERING, FINISHING, FLAGGING, SAVING
+   ========================================================================= */
+function sessionById(id) { return S.sessions.find(s => s.id === id) || (S.waiting && S.waiting.id === id ? S.waiting : null); }
+function answer(sid, i, choice) {
+  const s = sessionById(sid); if (!s || s.answers[i]) return;
+  const q = s.questions[i];
+  if (choice === null) s.answers[i] = { choice: null, status: "unknown" };
+  else s.answers[i] = { choice: choice, status: q.options[choice] === q.correct ? "right" : "wrong" };
+  save(); render();
+}
+function nextQuestion(sid) { const s = sessionById(sid); if (!s) return; s.shown = Math.min(SESSION_SIZE, s.shown + 1); save(); render(); const el = $("#q-" + (s.shown - 1)); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }
+function finishSession(sid) {
+  const s = sessionById(sid); if (!s) return;
+  s.stage = s.theme ? "guess" : "done"; if (s.stage === "done") s.finishedAt = nowIso();
+  save(); render(); window.scrollTo(0, 0); scheduleBackground();
+}
+function reveal(sid, guess) {
+  const s = sessionById(sid); if (!s) return;
+  s.guess = guess || ""; s.stage = "done"; s.finishedAt = nowIso(); save(); render(); window.scrollTo(0, 0);
+}
+function score(s) {
+  const c = { right: 0, wrong: 0, unknown: 0, none: 0 };
+  s.answers.forEach(a => { if (!a) c.none++; else c[a.status]++; });
+  return c;
+}
+
+const REASONS = ["Wrong answer", "Unclear", "Source", "Repeat", "Other"];
+function openFlag(sid, qid) { U.flag = { sid, qid, reason: "", note: "", noteOpen: false }; render(); }
+function saveFlag() {
+  const f = U.flag; if (!f || !f.reason) return;
+  const s = sessionById(f.sid); if (!s) return;
+  const q = s.questions.find(x => x.id === f.qid); if (!q) return;
+  S.flags[q.id] = {
+    id: q.id, topic: q.topic, question: q.question, options: q.options, correct: q.correct, explanation: q.explanation || "",
+    extra_fact: q.extra_fact || "", sources: q.sources, fingerprint: q.fingerprint, tags: q.tags || [],
+    theme: s.theme || null, source: s.source, date: fmtDate(nowIso()), at: nowIso(), reason: f.reason, note: f.note.trim()
+  };
+  U.flag = null; save(); render();
+}
+function toggleStar(sid, qid) {
+  if (S.saved[qid]) { delete S.saved[qid]; save(); render(); return; }
+  const s = sessionById(sid); const q = s && s.questions.find(x => x.id === qid); if (!q) return;
+  S.saved[qid] = Object.assign({}, q, { savedAt: nowIso(), theme: s.theme || null });
+  save(); render();
+}
+
+/* =========================================================================
+   DRAWING THE SCREENS
+   ========================================================================= */
+function linksHtml(srcs) {
+  return '<ul class="src">' + (srcs || []).map(s => { const u = safeUrl(s.url); return u ? '<li><a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(s.site) + " ↗</a></li>" : ""; }).join("") + "</ul>";
+}
+function flagPanel(sid, qid) {
+  const f = U.flag; if (!f || f.sid !== sid || f.qid !== qid) return "";
+  const open = f.noteOpen || f.reason === "Other";
+  return '<div class="card soft"><strong>What\'s wrong with this question?</strong><div class="chips">' +
+    REASONS.map(r => '<button data-act="flag-reason" data-r="' + esc(r) + '" class="' + (f.reason === r ? "on" : "") + '">' + esc(r) + "</button>").join("") + "</div>" +
+    (open ? '<textarea id="flagNote" placeholder="Optional note">' + esc(f.note) + "</textarea>" : '<button class="btn link" data-act="flag-note">Add note</button>') +
+    '<div><button class="btn primary" data-act="flag-save"' + (f.reason ? "" : " disabled") + '>Save flag</button><button class="btn" data-act="flag-cancel">Cancel</button></div>' +
+    '<p class="small dim">A flagged question never comes back.</p></div>';
+}
+function flagStar(sid, q) {
+  const flagged = S.flags[q.id], starred = S.saved[q.id];
+  return '<span><button class="btn small" data-act="star" data-sid="' + sid + '" data-qid="' + q.id + '" aria-label="Save for later">' + (starred ? "★ Saved" : "☆ Save") + "</button>" +
+    (flagged ? '<button class="btn small" data-act="flag-info" data-qid="' + q.id + '">⚑ Flagged</button>' : '<button class="btn small" data-act="flag" data-sid="' + sid + '" data-qid="' + q.id + '">⚑ Flag</button>') + "</span>";
+}
+function verdict(a) {
+  if (a.status === "right") return "Correct.";
+  if (a.status === "wrong") return "Not this time.";
+  return "You didn't know this one. Now you do.";
+}
+function feedbackHtml(q, a) {
+  return '<div class="fb"><p class="verdict">' + esc(verdict(a)) + "</p>" +
+    "<p><strong>Correct answer:</strong> " + esc(q.correct) + "</p>" +
+    "<p>" + esc(q.explanation) + "</p>" +
+    '<p class="worth"><strong>Worth knowing:</strong> ' + esc(q.extra_fact) + "</p>" +
+    '<p class="small dim" style="margin-bottom:0">Sources (open in a new tab)</p>' + linksHtml(q.sources) + "</div>";
+}
+function questionCard(s, i) {
+  const q = s.questions[i], a = s.answers[i];
+  let opts = "";
+  q.options.forEach((o, k) => {
+    if (!a) opts += '<button class="opt" data-act="opt" data-sid="' + s.id + '" data-i="' + i + '" data-k="' + k + '">' + esc(o) + "</button>";
+    else {
+      const isC = o === q.correct, isChosen = a.choice === k;
+      opts += '<div class="opt off ' + (isC ? "correct" : isChosen ? "chosen" : "") + '">' + esc(o) + (isC ? '<span class="tag">Correct answer</span>' : isChosen ? '<span class="tag">Your answer</span>' : "") + "</div>";
+    }
+  });
+  return '<section class="card" id="q-' + i + '"><div class="qmeta"><span>Question ' + (i + 1) + " of " + s.questions.length + " · " + esc(broadTopic(q.topic)) + "</span>" + flagStar(s.id, q) + "</div>" +
+    flagPanel(s.id, q.id) + '<div class="qtext">' + esc(q.question) + "</div>" + opts +
+    (a ? feedbackHtml(q, a) : '<button class="opt" style="text-align:center;color:var(--dim)" data-act="dk" data-sid="' + s.id + '" data-i="' + i + '">Don\'t know</button>') + "</section>";
+}
+function resultChip(a) {
+  if (!a) return '<span class="res">Not answered</span>';
+  if (a.status === "right") return '<span class="res right">Right</span>';
+  if (a.status === "wrong") return '<span class="res">Wrong</span>';
+  return '<span class="res">Didn\'t know</span>';
+}
+function recapRow(s, i) {
+  const q = s.questions[i], a = s.answers[i];
+  return '<div class="card"><div class="qmeta"><span>' + (i + 1) + ". " + esc(broadTopic(q.topic)) + " " + resultChip(a) + "</span>" + flagStar(s.id, q) + "</div>" +
+    flagPanel(s.id, q.id) + '<p><strong>' + esc(q.question) + "</strong></p><p>Answer: " + esc(q.correct) + "</p>" + linksHtml(q.sources) +
+    (s.compact ? "" : '<details><summary class="small">Explanation and extra fact</summary><p>' + esc(q.explanation) + '</p><p class="worth">' + esc(q.extra_fact) + "</p>" +
+      (q.theme_link ? '<p class="small dim">Link to the theme: ' + esc(q.theme_link) + "</p>" : "") + "</details>") + "</div>";
+}
+function scoreLine(s) {
+  const c = score(s);
+  const bits = [];
+  if (c.unknown) bits.push(c.unknown + " didn't know");
+  if (c.wrong) bits.push(c.wrong + " wrong");
+  if (c.none) bits.push(c.none + " not answered");
+  return '<span class="score">' + c.right + ' out of ' + s.questions.length + "</span>" + (bits.length ? '<span class="dim"> (' + bits.join(", ") + ")</span>" : "");
+}
+
+function viewLoading() {
+  return '<div class="card center" aria-live="polite"><div class="spin"></div><h2>Writing your questions…</h2>' +
+    "<p>The AI is searching the web for ten fresh facts and checking its sources. This usually takes one to two minutes.</p>" +
+    '<p class="dim"><span id="elapsed">0</span> seconds so far</p><button class="btn" data-act="use-bank">Use the question bank instead</button></div>';
+}
+function viewHome() {
+  const key = !!getKey();
+  let h = "";
+  if (U.noQuestions) h += '<div class="card callout"><strong>No new questions available.</strong><p>Check your key or try again later.</p></div>';
+  if (U.notice) h += '<div class="card soft"><p>' + esc(U.notice) + "</p></div>";
+  if (U.needKey || !key) h += keyCallout();
+  h += '<div class="card"><h2>Ready when you are</h2><p>Ten questions, one at a time, with a hidden theme to guess at the end.</p>' +
+    '<button class="btn primary wide" data-act="start">Start new session</button>' + statusLines() + "</div>";
+  return h;
+}
+function keyCallout() {
+  return '<div class="card callout"><h2>A key is needed for fresh questions</h2>' +
+    "<p>Fresh questions come from Perplexity's AI, which needs your own key. Paste it below. It is saved in this browser only.</p>" +
+    '<input type="password" id="keyInput" placeholder="Perplexity key" autocomplete="off" spellcheck="false">' +
+    '<button class="btn primary" data-act="key-save">Save key</button><button class="btn" data-act="use-bank">Use the question bank for now</button>' +
+    '<p class="small dim">Don\'t use the quiz with a saved key on a shared computer.</p>' + (U.keyMsg ? "<p>" + esc(U.keyMsg) + "</p>" : "") + "</div>";
+}
+function statusLines() {
+  let next = "not prepared yet";
+  if (S.waiting) next = "ready, so it will start straight away";
+  else if (U.prepPromise) next = "being prepared now";
+  else if (!getKey()) next = "needs a key";
+  return '<p class="small dim">Next session: ' + next + "<br>Question bank: " + bankLevel() + " of " + BANK_TARGET + " ready</p>";
+}
+function viewSession(s) {
+  let h = '<div class="row"><span class="dim small">Session · ' + esc(fmtDate(s.createdAt)) + (s.source === "bank" ? " · from the question bank" : "") + '</span><span class="spacer"></span><button class="btn small" data-act="newsession">New session</button></div>';
+  if (U.notice) h += '<div class="card soft"><p>' + esc(U.notice) + "</p></div>";
+  if (U.noQuestions) h += '<div class="card callout"><strong>No new questions available.</strong><p>Check your key or try again later.</p></div>';
+  if (U.needKey) h += keyCallout();
+  if (s.stage === "done") return h + viewEnd(s);
+  for (let i = 0; i < s.shown; i++) h += questionCard(s, i);
+  if (s.stage === "guess") return h + viewGuess(s);
+  const last = s.shown - 1, answered = !!s.answers[last];
+  h += '<div class="card"><div class="row">';
+  if (answered) h += last < s.questions.length - 1 ? '<button class="btn primary" data-act="next" data-sid="' + s.id + '">Next question</button>' : '<button class="btn primary" data-act="finish" data-sid="' + s.id + '">' + (s.theme ? "Finish and guess the theme" : "See results") + "</button>";
+  h += '<span class="spacer"></span>' + (answered && last === s.questions.length - 1 ? "" : '<button class="btn link" data-act="finish" data-sid="' + s.id + '">Finish early</button>') + "</div></div>";
+  return h;
+}
+function viewGuess(s) {
+  return '<div class="card callout"><h2>What was today\'s theme?</h2><p>Each session has a hidden theme linking its questions. It could be a year, a place, a person, a number or a word. Have a guess.</p>' +
+    '<input type="text" id="guessInput" placeholder="Your guess" autocomplete="off">' +
+    '<button class="btn primary" data-act="reveal" data-sid="' + s.id + '">Reveal the theme</button><button class="btn" data-act="reveal-skip" data-sid="' + s.id + '">Skip the guess</button></div>';
+}
+function viewEnd(s) {
+  let h = "";
+  if (s.theme) {
+    h += '<div class="card callout"><p class="small dim" style="margin:0">Today\'s theme</p><h2 style="margin-top:2px">' + esc(s.theme) + "</h2>" +
+      (s.themeNote ? "<p>" + esc(s.themeNote) + "</p>" : "") + (s.guess ? '<p>You guessed: <strong>' + esc(s.guess) + "</strong></p>" : '<p class="dim">You skipped the guess.</p>') +
+      '<div class="row">' + (s.themeResult ? '<span>You marked yourself: <strong>' + (s.themeResult === "right" ? "right" : "not quite") + "</strong></span>" :
+        '<button class="btn" data-act="mark" data-v="right" data-sid="' + s.id + '">I got it</button><button class="btn" data-act="mark" data-v="wrong" data-sid="' + s.id + '">Not this time</button>') + "</div></div>";
+  } else {
+    h += '<div class="card soft"><strong>No theme today.</strong><p class="small dim">Too few questions in the bank shared a tag.</p></div>';
+  }
+  h += '<div class="card"><p class="dim small" style="margin:0">Your score</p>' + scoreLine(s) + '<div style="margin-top:10px"><button class="btn primary" data-act="start">Start new session</button></div></div>';
+  h += "<h3>Recap</h3>";
+  s.questions.forEach((q, i) => { h += recapRow(s, i); });
+  return h;
+}
+
+function viewSaved() {
+  const list = Object.values(S.saved).sort((a, b) => (b.savedAt > a.savedAt ? 1 : -1));
+  let h = "<h2>Saved for later</h2>";
+  if (!list.length) return h + '<p class="dim">Nothing saved yet. Tap ☆ Save on any question.</p>';
+  list.forEach(q => {
+    h += '<div class="card"><div class="qmeta"><span>' + esc(broadTopic(q.topic)) + '</span><button class="btn small" data-act="unstar" data-qid="' + q.id + '">★ Remove</button></div>' +
+      "<p><strong>" + esc(q.question) + "</strong></p><p>Answer: " + esc(q.correct) + "</p>" + (q.extra_fact ? '<p class="worth">' + esc(q.extra_fact) + "</p>" : "") + linksHtml(q.sources) + "</div>";
+  });
+  return h;
+}
+function viewPast() {
+  const list = S.sessions.slice().sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1));
+  let h = "<h2>Past sessions</h2>";
+  if (!list.length) return h + '<p class="dim">No sessions yet.</p>';
+  list.forEach(s => {
+    h += '<details class="card" data-pastid="' + s.id + '"' + (U.pastOpen[s.id] ? " open" : "") + '><summary><strong>' + esc(fmtDate(s.createdAt)) + "</strong> · " + esc(s.theme || "No theme") + " · " + (function () { const c = score(s); return c.right + "/" + s.questions.length; })() +
+      (s.stage !== "done" ? ' <span class="res">unfinished</span>' : "") + "</summary>";
+    s.questions.forEach((q, i) => { h += recapRow(s, i); });
+    h += "</details>";
+  });
+  return h;
+}
+function viewFlagged() {
+  const list = Object.values(S.flags).sort((a, b) => (b.at > a.at ? 1 : -1));
+  let h = "<h2>Flagged questions</h2>";
+  if (!list.length) return h + '<p class="dim">No flags yet.</p>';
+  h += "<p class=\"small dim\">Unflagging removes the flag mark only. The question still counts as asked, so it won't come back.</p>";
+  list.forEach(f => {
+    h += '<div class="card"><div class="qmeta"><span>' + esc(f.reason) + " · " + esc(f.date) + '</span><button class="btn small" data-act="unflag" data-qid="' + f.id + '">Unflag</button></div>' +
+      "<p><strong>" + esc(f.question) + "</strong></p><p>Answer: " + esc(f.correct) + "</p>" + (f.note ? '<p class="worth">Your note: ' + esc(f.note) + "</p>" : "") + linksHtml(f.sources) + "</div>";
+  });
+  return h;
+}
+function viewSettings() {
+  const key = !!getKey(), m = spendAud();
+  let h = "<h2>Settings</h2>";
+  if (U.corrupt) h += '<div class="card callout"><p>The saved data on this phone could not be read, so the quiz started fresh. The unreadable copy was kept in case it can be rescued.</p></div>';
+  if (U.saveError) h += '<div class="card callout"><p>This browser would not save your latest changes (storage may be full). Take a backup now.</p></div>';
+  h += '<div class="card"><h3 style="margin-top:0">Perplexity key</h3><p>' + (key ? "A key is saved in this browser." : "No key saved.") + "</p>" +
+    '<input type="password" id="keyInput" placeholder="' + (key ? "Paste a new key to change it" : "Paste your key") + '" autocomplete="off" spellcheck="false">' +
+    '<button class="btn primary" data-act="key-save">' + (key ? "Change key" : "Save key") + "</button>" + (key ? '<button class="btn" data-act="key-forget">Forget key</button>' : "") +
+    '<p class="small dim">The key is stored in this browser only. Don\'t use the quiz on a shared computer. It is never put in a backup or export.</p>' + (U.keyMsg ? "<p>" + esc(U.keyMsg) + "</p>" : "") + "</div>";
+  h += '<div class="card"><h3 style="margin-top:0">Question bank</h3><p><strong>Bank: ' + bankLevel() + " of " + BANK_TARGET + " ready</strong></p>" +
+    "<p class=\"small dim\">Last successful top-up: " + (S.lastTopup ? esc(fmtDateTime(S.lastTopup)) : "none yet") + "<br>AI-written bank questions on this phone: " + S.topup.length + "<br>Next session: " + (S.waiting ? "ready" : U.prepPromise ? "being prepared" : "not prepared") + "</p></div>";
+  h += '<div class="card"><h3 style="margin-top:0">Spend guide (estimate only)</h3><p>About A$' + m.toFixed(2) + " of A$" + MONTHLY_CAP_AUD + " this month.</p>" +
+    '<p class="small dim">This is a rough guide counted by this quiz at about ' + USD_TO_AUD + ' Australian dollars per US dollar. Your real limit and real spend are in your Perplexity account.</p></div>';
+  h += '<div class="card"><h3 style="margin-top:0">Your data</h3>' +
+    '<button class="btn" data-act="export-flags">Export flags</button><button class="btn" data-act="backup">Backup</button><button class="btn" data-act="restore">Restore</button>' +
+    '<input type="file" id="restoreFile" accept=".json,application/json" style="display:none">' +
+    (U.exportText != null ? '<h3>Flags export</h3><pre class="exp" id="expText">' + esc(U.exportText) + '</pre><button class="btn" data-act="exp-copy">Copy</button><button class="btn" data-act="exp-download">Download file</button><button class="btn link" data-act="exp-close">Close</button>' : "") +
+    '<hr><button class="btn" data-act="clear-all">Clear all data</button></div>';
+  h += '<p class="small dim center">Daily Quiz v' + APP_VERSION + " · questions by " + esc(AI.model) + "</p>";
+  return h;
+}
+
+function render() {
+  const nav = $("#nav"), app = $("#app");
+  const tabs = [["quiz", "Quiz"], ["saved", "Saved"], ["past", "Past"], ["flagged", "Flagged"], ["settings", "Settings"]];
+  const nf = Object.keys(S.flags).length;
+  nav.innerHTML = tabs.map(t => '<button data-act="tab" data-t="' + t[0] + '" class="' + (U.tab === t[0] ? "on" : "") + '">' + t[1] + (t[0] === "flagged" && nf ? '<span class="badge">' + nf + "</span>" : "") + "</button>").join("");
+  const y = window.scrollY;
+  let h = "";
+  if (U.tab === "quiz") h = U.starting ? viewLoading() : (curSession() ? viewSession(curSession()) : viewHome());
+  else if (U.tab === "saved") h = viewSaved();
+  else if (U.tab === "past") h = viewPast();
+  else if (U.tab === "flagged") h = viewFlagged();
+  else h = viewSettings();
+  app.innerHTML = h;
+  window.scrollTo(0, y);
+}
+
+/* =========================================================================
+   FLAG EXPORT, BACKUP, RESTORE, CLEAR
+   ========================================================================= */
+function flagsText() {
+  const list = Object.values(S.flags).sort((a, b) => (a.at > b.at ? 1 : -1));
+  if (!list.length) return "You haven't flagged any questions yet.";
+  const L = ["DAILY QUIZ: FLAGGED QUESTIONS", "Exported: " + fmtDateTime(nowIso()), "Number of flags: " + list.length, ""];
+  list.forEach((f, n) => {
+    L.push("=== Flag " + (n + 1) + " of " + list.length + " ===", "Date flagged: " + f.date, "Reason: " + f.reason, "Note: " + (f.note || "(none)"),
+      "Topic: " + f.topic, "Question: " + f.question, "Options: " + f.options.map((o, i) => "ABCD"[i] + ") " + o).join("   "), "Correct answer: " + f.correct,
+      "Explanation: " + f.explanation, "Worth knowing: " + f.extra_fact, "Sources:");
+    f.sources.forEach(s => L.push("  - " + s.site + ": " + s.url));
+    L.push("Fingerprint: " + f.fingerprint, "Tags: " + ((f.tags || []).join(", ") || "(none)"), "Session theme: " + (f.theme || "(none)"), "Question ID: " + f.id, "");
+  });
+  return L.join("\n");
+}
+function noKeyIn(text) { const k = getKey(); return !k || text.indexOf(k) < 0; }
+function download(name, text, type) {
+  const url = URL.createObjectURL(new Blob([text], { type: type || "text/plain" }));
+  const a = document.createElement("a"); a.href = url; a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 500);
+}
+function ymd() { return new Intl.DateTimeFormat("en-CA", { timeZone: TZ }).format(new Date()); }
+function backupText() {
+  const text = JSON.stringify({ app: "daily-quiz", version: APP_VERSION, exportedAt: nowIso(), data: S }, null, 1);
+  return noKeyIn(text) ? text : null;
+}
+function doBackup() { const t = backupText(); if (!t) { alert("Backup stopped: it would have contained the key."); return false; } download("daily-quiz-backup-" + ymd() + ".json", t, "application/json"); return true; }
+
+function mergeBackup(d) {
+  const seenN = new Set(S.seen.map(e => e.n + "|" + e.qid));
+  (d.seen || []).forEach(e => { if (!seenN.has(e.n + "|" + e.qid)) S.seen.push(e); });
+  Object.assign(S.asked, d.asked || {});
+  const ids = new Set(S.sessions.map(s => s.id));
+  (d.sessions || []).forEach(s => { if (!ids.has(s.id)) S.sessions.push(s); });
+  Object.keys(d.flags || {}).forEach(k => { if (!S.flags[k]) S.flags[k] = d.flags[k]; });
+  Object.keys(d.saved || {}).forEach(k => { if (!S.saved[k]) S.saved[k] = d.saved[k]; });
+  const tids = new Set(S.topup.map(q => q.id));
+  (d.topup || []).forEach(q => { if (!tids.has(q.id)) S.topup.push(q); });
+  if (!S.waiting && d.waiting) S.waiting = d.waiting;
+  if (d.lastTopup && (!S.lastTopup || d.lastTopup > S.lastTopup)) S.lastTopup = d.lastTopup;
+  Object.keys(d.spend || {}).forEach(m => { S.spend[m] = Math.max(S.spend[m] || 0, d.spend[m] || 0); });
+  if (!curSession() && d.currentId && S.sessions.some(s => s.id === d.currentId)) S.currentId = d.currentId;
+}
+function handleRestoreFile(file) {
+  const r = new FileReader();
+  r.onload = () => {
+    let o = null; try { o = JSON.parse(r.result); } catch (e) {}
+    if (!o || o.app !== "daily-quiz" || !o.data || typeof o.data !== "object") { modal("Couldn't restore", "<p>That doesn't look like a Daily Quiz backup file.</p>", [{ label: "OK", primary: true }]); return; }
+    const d = Object.assign(blank(), o.data);
+    const info = "<p>The backup holds " + d.sessions.length + " sessions, " + Object.keys(d.flags).length + " flags, " + Object.keys(d.saved).length + " saved questions and " + d.topup.length + " AI bank questions.</p><p><strong>Add</strong> keeps what's on this phone and brings in anything missing. <strong>Replace</strong> erases what's on this phone first.</p>";
+    modal("Restore this backup?", info, [
+      { label: "Add to what's here", primary: true, fn: () => { mergeBackup(d); save(); render(); } },
+      { label: "Replace everything", fn: () => { S = d; save(); render(); } },
+      { label: "Cancel" }]);
+  };
+  r.readAsText(file);
+}
+function clearAllFlow() {
+  const body = "<p><strong>This wipes</strong> your history, fingerprints, flags, saved questions, past sessions, the waiting session and AI-written bank questions.</p>" +
+    "<p><strong>Old questions may come back.</strong> The 30 starter questions become fresh again, so ones you've seen before can be asked again. This is the only time a repeat is allowed.</p>" +
+    '<p>Take a backup first if you might want your data back.</p><button class="btn" id="mBackup">Download a backup first</button>' +
+    '<label style="display:block;margin-top:8px"><input type="checkbox" id="mForget"> Also forget my Perplexity key</label>';
+  modal("Clear all data?", body, [
+    { label: "Clear everything", primary: true, fn: () => { const f = $("#mForget") && $("#mForget").checked; S = blank(); save(); if (f) forgetKey(); U.flag = null; U.exportText = null; render(); scheduleBackground(); }, keepBoxRead: true },
+    { label: "Cancel" }], () => { const b = $("#mBackup"); if (b) b.onclick = doBackup; });
+}
+
+function modal(title, html, buttons, after) {
+  const root = $("#modal");
+  root.innerHTML = '<div class="modalback"><div class="modalbox" role="dialog" aria-modal="true"><h2 style="margin-top:0">' + esc(title) + "</h2>" + html + '<div id="mBtns" style="margin-top:12px"></div></div></div>';
+  const box = $("#mBtns", root);
+  buttons.forEach(b => {
+    const el = document.createElement("button"); el.className = "btn" + (b.primary ? " primary" : ""); el.textContent = b.label;
+    el.onclick = () => { if (b.fn) b.fn(); root.innerHTML = ""; };
+    box.appendChild(el);
+  });
+  if (after) after();
+}
+
+/* =========================================================================
+   EVENTS
+   ========================================================================= */
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  const a = el.dataset.act, d = el.dataset;
+  switch (a) {
+    case "tab": U.tab = d.t; U.flag = null; if (d.t !== "settings") U.exportText = null; render(); window.scrollTo(0, 0); break;
+    case "start": U.tab = "quiz"; startSession(false); break;
+    case "newsession": {
+      const s = curSession();
+      if (s && s.stage !== "done") modal("Start a new session?", "<p>This session isn't finished. Its questions won't come back, and it stays in Past sessions.</p>", [{ label: "Start new session", primary: true, fn: () => startSession(false) }, { label: "Keep going" }]);
+      else startSession(false);
+      break; }
+    case "use-bank": if (U.ctl) U.ctl.abort(); else startSession(true); break;
+    case "opt": answer(d.sid, +d.i, +d.k); break;
+    case "dk": answer(d.sid, +d.i, null); break;
+    case "next": nextQuestion(d.sid); break;
+    case "finish": finishSession(d.sid); break;
+    case "reveal": { const g = $("#guessInput"); reveal(d.sid, g ? g.value.trim() : ""); break; }
+    case "reveal-skip": reveal(d.sid, ""); break;
+    case "mark": { const s = sessionById(d.sid); if (s) { s.themeResult = d.v; save(); render(); } break; }
+    case "star": toggleStar(d.sid, d.qid); break;
+    case "unstar": delete S.saved[d.qid]; save(); render(); break;
+    case "flag": openFlag(d.sid, d.qid); break;
+    case "flag-info": modal("Already flagged", "<p>" + esc(S.flags[d.qid] ? S.flags[d.qid].reason : "") + ". You can unflag it from the Flagged tab.</p>", [{ label: "OK", primary: true }]); break;
+    case "flag-reason": if (U.flag) { const n = $("#flagNote"); if (n) U.flag.note = n.value; U.flag.reason = d.r; render(); } break;
+    case "flag-note": if (U.flag) { U.flag.noteOpen = true; render(); } break;
+    case "flag-save": { const n = $("#flagNote"); if (U.flag && n) U.flag.note = n.value; saveFlag(); break; }
+    case "flag-cancel": U.flag = null; render(); break;
+    case "unflag": delete S.flags[d.qid]; save(); render(); break;   // asked/seen records stay, so it never returns
+    case "key-save": {
+      const v = ($("#keyInput") || {}).value || "";
+      if (v.trim().length < 8) { U.keyMsg = "That doesn't look like a key."; render(); break; }
+      U.keyMsg = setKey(v.trim()) ? "Key saved in this browser." : "This browser wouldn't save the key.";
+      U.needKey = false; if (U.tab === "quiz") U.notice = U.keyMsg; render(); scheduleBackground(); break; }
+    case "key-forget": forgetKey(); U.keyMsg = "Key forgotten."; render(); break;
+    case "export-flags": U.exportText = flagsText(); render(); break;
+    case "exp-copy": {
+      const t = U.exportText || "";
+      (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { el.textContent = "Copied"; }, () => { const p = $("#expText"); if (p) { const r = document.createRange(); r.selectNodeContents(p); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); } el.textContent = "Select and copy the text"; });
+      break; }
+    case "exp-download": download("daily-quiz-flags-" + ymd() + ".txt", U.exportText || "", "text/plain"); break;
+    case "exp-close": U.exportText = null; render(); break;
+    case "backup": doBackup(); break;
+    case "restore": { const f = $("#restoreFile"); if (f) { f.value = ""; f.onchange = () => { if (f.files[0]) handleRestoreFile(f.files[0]); }; f.click(); } break; }
+    case "clear-all": clearAllFlow(); break;
+  }
+});
+document.addEventListener("toggle", e => { const d = e.target; if (d && d.dataset && d.dataset.pastid) U.pastOpen[d.dataset.pastid] = d.open; }, true);
+document.addEventListener("input", e => { if (e.target.id === "flagNote" && U.flag) U.flag.note = e.target.value; });
+
+/* =========================================================================
+   GO
+   ========================================================================= */
+if (S.sessions.length > 200) compactSessions(200);
+render();
+scheduleBackground();
+window.addEventListener("online", scheduleBackground);
+})();
+</script>
+</body>
+</html>
