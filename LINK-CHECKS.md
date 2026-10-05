@@ -13,7 +13,7 @@ Tick = yes. Notes show anything less than a full yes.
 | s03 | "Big Ben" is the Great Bell | Wikipedia (Big Ben); History.com | ✓ ✓ | ✓ ✓ | 31 May 1859 start is on both; 11 July 1859 first chime is Wikipedia only. |
 | s04 | Suez Canal opened 1869 | Wikipedia (Suez Canal); Britannica | ✓ ✓ | ✓ ✓ | Britannica supports "completed in 1869" only. The 1859 start date and de Lesseps are Wikipedia only. |
 | s05 | Tristan chord notes | Wikipedia (Tristan chord); Wikipedia (Tristan und Isolde) | ✓ ✓ | ✓ ✓ | **Both links are Wikipedia.** Britannica and classical-music.com could not give me the notes. The 1859 completion date is on the second page. |
-| s06 | Queensland Letters Patent 1859 | Wikipedia (Separation of Queensland); Queensland State Archives | ✓ ✓ | ✓ ✓ | Neither page says who chose the name, so I did not ask that. |
+| s06 | Queensland was separated from New South Wales | Wikipedia (Separation of Queensland); Queensland State Archives | ✓ ✓ | ✓ ✓ | Reworded on 5 Oct (v1.1): it used to ask for the year 1859. Both pages say the Letters Patent separated Queensland from New South Wales. Neither page says who chose the name, so I did not ask that. |
 | s07 | Parkes supplied most Apollo 11 TV | CSIRO Parkes site; CSIRO Murriyang page; Wikipedia (Parkes Observatory) | ✓ ✓ ✓ | ✓ ✓ ✓ | The CSIRO Murriyang page says Honeysuckle Creek had the first pictures; the Parkes site and Wikipedia say NASA stayed with Parkes for the rest. 600 million viewers is on the CSIRO Murriyang page. |
 | s08 | First ARPANET message "lo" | Wikipedia (ARPANET); UPI | ✓ ✓ | ✓ ✓ | historyofinformation.com loaded but showed no text, so not used. |
 | s09 | Woodstock held at Bethel | Wikipedia (Woodstock); Britannica | ✓ ✓ | ✓ ✓ | The 95 km figure is Wikipedia only. The Britannica link is its "print" version of the article because the normal address did not open. |
@@ -40,3 +40,5 @@ Tick = yes. Notes show anything less than a full yes.
 | s30 | First YouTube video shows elephants | Wikipedia (Me at the zoo); NBC 7 San Diego | ✓ ✓ | ✓ ✓ | |
 
 **Summary:** 30 of 30 questions have at least two links that loaded and support the answer. Two are weaker than I would like: **s05** has two Wikipedia pages only, and **s04**'s Britannica link supports only the 1869 opening. Every check I could not run is listed in the first paragraph.
+
+**Update, 5 Oct 2026 (v1.1):** to stop questions giving their own theme away, I removed the year from the wording of s01, s02, s04, s05, s07, s08, s09, s10 and s11, and reworded s06 (above). No fact changed, so the links and the checks above still apply. The explanation shown after answering still gives the date.

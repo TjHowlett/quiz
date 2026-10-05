@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Daily Quiz</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%E2%9D%93</text></svg>">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
   :root {
     --bg: #f7f5f0;
@@ -154,7 +158,8 @@
 /* =========================================================================
    SETTINGS YOU MIGHT WANT TO CHANGE
    ========================================================================= */
-const APP_VERSION = "1.0";
+const APP_VERSION = "1.1";
+const PROMPT_VERSION = 3;                 // bump when the AI instructions change; stale waiting sessions are then discarded
 const STORE_KEY = "dailyQuiz.v1";         // everything the quiz remembers EXCEPT the API key
 const KEY_STORE = "dailyQuiz.apiKey";     // the API key lives alone, here. Never in a backup or export.
 const BANK_TARGET = 30;                   // unused bank questions we try to keep ready
@@ -251,10 +256,18 @@ Mix topics so no more than 2 questions share a broad topic. Art and sport come u
 
 function avoidText(list) { return list.length ? list.map(s => "- " + s).join("\n") : "(none)"; }
 
-function promptLive(count, avoid) {
+const THEME_RULES = `THEME RULES (important):
+- The theme is a hidden puzzle the player guesses at the end. Make it CRYPTIC and loose, not strict. It could be a year or era, a place, a person's name, a colour, an object, an animal, a word, a letter, or something oblique that links the facts by association. Too cryptic is better than too obvious or too restrictive.
+- NEVER use a counting number as the theme (such as "twelve" or "seven"): it tempts "how many" questions whose answer is the theme.
+- The theme itself must NEVER appear in any question's wording or in any answer option, and must never be the answer to a question. Write questions so a player could not guess the theme from a single question.
+- Do not force facts to fit. Links may be loose or indirect (a date, a person involved, a place, a word in a name). At least 7 of the 10 final questions should connect to the theme in some real way. The rest should simply be good questions on other topics, with theme_link set to the single word none.`;
+function promptLive(count, avoid, pastThemes) {
   return `You are writing a multiple-choice quiz that has a hidden theme.
-STEP 1: choose a SPECIFIC theme that can link facts from very different topics: a particular year, a number, a country, a person's name, or a single word. Not a vague category. Put it in "theme" (a few words only), and in "theme_explanation" say in one line how the questions connect.
-STEP 2: write ${count} candidate questions that each contain a real, checked fact connected to the theme. For each, "theme_link" says in one short line how it connects. Accuracy beats the theme: if a fact would have to be stretched to fit, use a different question.
+STEP 1: choose the theme. Put it in "theme" (a few words only), and in "theme_explanation" say in one line what links the questions.
+${THEME_RULES}
+- Choose a theme DIFFERENT from these recent ones:
+${avoidText(pastThemes || [])}
+STEP 2: write ${count} candidate questions. For each, "theme_link" says in one short line how it connects to the theme, or the single word none. Accuracy beats the theme: if a fact would have to be stretched to fit, use a different question.
 Topics available: ${TOPIC_LIST_TEXT}.
 ${FORMAT_RULES}
 Do NOT ask about any of these (already asked):
@@ -263,7 +276,8 @@ Return only JSON matching the schema.`;
 }
 function promptMore(theme, count, avoid) {
   return `You are adding replacement questions to a multiple-choice quiz whose hidden theme is: ${theme}.
-Write ${count} more candidate questions that each contain a real, checked fact connected to that theme. For each, "theme_link" says in one short line how it connects. Accuracy beats the theme.
+${THEME_RULES}
+Write ${count} more candidate questions. For each, "theme_link" says in one short line how it connects to the theme, or the single word none. Accuracy beats the theme.
 Topics available: ${TOPIC_LIST_TEXT}.
 ${FORMAT_RULES}
 Do NOT ask about any of these (already asked or already chosen):
@@ -332,6 +346,8 @@ function load() {
   }
 }
 let S = load();
+// A waiting session written under older AI instructions (for example before the theme rules changed) is thrown away.
+if (S.waiting && S.waiting.pv !== PROMPT_VERSION) { S.waiting = null; save(); }
 
 function save() {
   try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); U.saveError = false; return true; }
@@ -390,6 +406,29 @@ function isSeenFp(fp, exceptQid) {
 }
 function recentFps() { return S.seen.slice(-AVOID_COUNT).map(e => e.fp); }
 
+// Themes already used, so the AI is told to pick something new (the "twelve, twice in a row" problem).
+function recentThemes() {
+  const out = [];
+  S.sessions.slice().reverse().concat(S.waiting ? [S.waiting] : []).forEach(s => { if (s.theme && !out.some(t => t.toLowerCase() === s.theme.toLowerCase())) out.push(s.theme); });
+  return out.slice(0, 25);
+}
+
+// Does the theme appear in the question wording, the options or the answer? If so the question
+// gives the theme away (or the answer away), so it is not used. Numbers match their spelled-out
+// form too ("12" and "twelve"). Limit: it won't catch a hint phrased in different words.
+const NUMW = { zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20 };
+function themeForms(theme) {
+  const n = fpNorm(theme), f = [n];
+  if (/^\d+$/.test(n)) { const w = Object.keys(NUMW).find(k => NUMW[k] === Number(n)); if (w) f.push(w); }
+  else if (NUMW[n] !== undefined) f.push(String(NUMW[n]));
+  return f;
+}
+function leaks(q, theme) {
+  if (!theme) return false;
+  const text = " " + fpNorm([q.question].concat(q.options || [], [q.correct]).join(" ")) + " ";
+  return themeForms(theme).some(f => f && text.includes(" " + f + " "));
+}
+
 // Within one batch we are stricter: same subject even if worded differently.
 const NOUN_STOP = new Set(["australia", "australian", "australias", "history", "geography", "which", "what", "who", "whom", "whose", "where", "when", "why", "how", "according", "many", "much", "strictly", "speaking", "name", "the", "these", "those", "there"]);
 // Capitalised words (likely names) in a question, ignoring its first word and common question words.
@@ -439,16 +478,21 @@ function makeBankSession() {
   if (pool.length < SESSION_SIZE) return null;
   // Theme: the tag shared by the most unused questions; needs 5 or more.
   const counts = {};
-  pool.forEach(q => (q.tags || []).forEach(t => { const k = String(t).trim().toLowerCase(); if (!counts[k]) counts[k] = { n: 0, label: t }; counts[k].n++; }));
+  // A tag only counts for a question if the tag itself isn't written in the question or its options.
+  pool.forEach(q => (q.tags || []).forEach(t => { if (leaks(q, t)) return; const k = String(t).trim().toLowerCase(); if (!counts[k]) counts[k] = { n: 0, label: t }; counts[k].n++; }));
   const top = Object.values(counts).sort((a, b) => b.n - a.n);
   let theme = null, fit = 0, chosen = [];
   if (top.length && top[0].n >= 5) {
     const best = top.filter(t => t.n === top[0].n); const pick = best[Math.floor(Math.random() * best.length)];
     const key = String(pick.label).trim().toLowerCase();
-    const tagged = pool.filter(q => (q.tags || []).some(t => String(t).trim().toLowerCase() === key));
+    theme = pick.label;
+    const tagged = pool.filter(q => (q.tags || []).some(t => String(t).trim().toLowerCase() === key) && !leaks(q, theme));
     chosen = pickWithCaps(tagged, SESSION_SIZE, []);
-    fit = chosen.length; theme = pick.label;
-    if (chosen.length < SESSION_SIZE) chosen = pickWithCaps(pool.filter(q => !chosen.includes(q)), SESSION_SIZE, chosen);
+    fit = chosen.length;
+    if (chosen.length < SESSION_SIZE) {
+      const rest = pool.filter(q => !chosen.includes(q)), clean = rest.filter(q => !leaks(q, theme));
+      chosen = pickWithCaps(clean.length >= SESSION_SIZE - chosen.length ? clean : rest, SESSION_SIZE, chosen);
+    }
   } else {
     chosen = pickWithCaps(pool, SESSION_SIZE, []);
   }
@@ -530,10 +574,11 @@ function cleanQuestion(raw, realMap, needTags) {
 function realMapOf(results) { const m = new Map(); (results || []).forEach(r => { if (r && r.url) m.set(normUrl(r.url), r); }); return m; }
 
 // Adds good new questions to `kept` (up to `limit`), skipping repeats of anything seen or in the bank.
-function acceptInto(kept, cands, limit, bankFps) {
+function acceptInto(kept, cands, limit, bankFps, theme) {
   const hosts = q => new Set(q.sources.map(s => hostOf(s.url))).size;
   cands.slice().sort((a, b) => hosts(b) - hosts(a)).forEach(c => {
     if (kept.length >= limit) return;
+    if (theme && leaks(c, theme)) return;                 // the theme must never show in the question
     if (isSeenFp(c.fingerprint)) return;
     if (bankFps.some(f => fpMatch(c.fingerprint, f))) return;
     if (kept.some(k => sameSubject(k, c))) return;
@@ -550,7 +595,7 @@ function bankFpList() { return allBank().filter(q => !S.flags[q.id]).map(q => q.
 async function generateLive(signal) {
   const avoid = recentFps(), bankFps = bankFpList();
   let theme = "", themeNote = "", kept = [], attempts = 0;
-  let prompt = promptLive(14, avoid), schema = schemaLive(), name = "quiz_session_v2";
+  let prompt = promptLive(14, avoid, recentThemes()), schema = schemaLive(), name = "quiz_session_v2";
   while (attempts < 3 && kept.length < SESSION_SIZE) {
     attempts++;
     const r = await AI.call({ prompt, schemaName: name, schema, signal });
@@ -559,7 +604,7 @@ async function generateLive(signal) {
     if (attempts === 1) { theme = str(data.theme); themeNote = str(data.theme_explanation); if (!theme) throw mkErr("format", "The AI didn't give a theme."); }
     const realMap = realMapOf(r.results);
     const cands = data.questions.map(q => cleanQuestion(q, realMap, false)).filter(Boolean);
-    acceptInto(kept, cands, SESSION_SIZE, bankFps);
+    acceptInto(kept, cands, SESSION_SIZE, bankFps, theme);
     if (kept.length < SESSION_SIZE) {
       prompt = promptMore(theme, SESSION_SIZE - kept.length + 4, avoid.concat(kept.map(k => k.fingerprint)));
       schema = schemaMore(); name = "quiz_more_v2";
@@ -571,7 +616,9 @@ async function generateLive(signal) {
 // Turns a live result into a session. If the AI gave fewer than 10 good questions, fills from the bank.
 function sessionFromLive(res) {
   if (!res.kept.length) return null;
-  let qs = res.kept.slice(), source = "live", fit = qs.length;
+  let qs = res.kept.slice(), source = "live";
+  const linked = q => q.theme_link && !/^none\b/i.test(q.theme_link);
+  let fit = qs.filter(linked).length;       // questions the AI says really connect to the theme
   if (qs.length < SESSION_SIZE) {
     const filler = pickWithCaps(unusedBank(), SESSION_SIZE, []).slice(0, SESSION_SIZE - qs.length).map(prepBankQuestion);
     if (qs.length + filler.length < SESSION_SIZE) return null;
@@ -580,8 +627,10 @@ function sessionFromLive(res) {
   }
   qs = shuffle(qs);
   qs.forEach(markSeen);
-  const note = res.themeNote + (source === "mixed" ? " (The theme fits " + fit + " of " + SESSION_SIZE + "; the rest came from the question bank.)" : "");
-  return newSession({ source, theme: res.theme, themeNote: note, fit, questions: qs });
+  const note = res.themeNote + (fit < SESSION_SIZE ? " Fits " + fit + " of " + SESSION_SIZE + " questions" + (source === "mixed" ? " (some came from the question bank)" : "") + "." : "");
+  const sess = newSession({ source, theme: res.theme, themeNote: note, fit, questions: qs });
+  sess.pv = PROMPT_VERSION;
+  return sess;
 }
 
 function coolingDown(stamp) { return stamp && (Date.now() - new Date(stamp).getTime()) < 30 * 60 * 1000; }
@@ -685,7 +734,7 @@ function finishSession(sid) {
 }
 function reveal(sid, guess) {
   const s = sessionById(sid); if (!s) return;
-  s.guess = guess || ""; s.stage = "done"; s.finishedAt = nowIso(); save(); render(); window.scrollTo(0, 0);
+  U.guessDraft = ""; s.guess = guess || ""; s.stage = "done"; s.finishedAt = nowIso(); save(); render(); window.scrollTo(0, 0);
 }
 function score(s) {
   const c = { right: 0, wrong: 0, unknown: 0, none: 0 };
@@ -770,7 +819,7 @@ function recapRow(s, i) {
   return '<div class="card"><div class="qmeta"><span>' + (i + 1) + ". " + esc(broadTopic(q.topic)) + " " + resultChip(a) + "</span>" + flagStar(s.id, q) + "</div>" +
     flagPanel(s.id, q.id) + '<p><strong>' + esc(q.question) + "</strong></p><p>Answer: " + esc(q.correct) + "</p>" + linksHtml(q.sources) +
     (s.compact ? "" : '<details><summary class="small">Explanation and extra fact</summary><p>' + esc(q.explanation) + '</p><p class="worth">' + esc(q.extra_fact) + "</p>" +
-      (q.theme_link ? '<p class="small dim">Link to the theme: ' + esc(q.theme_link) + "</p>" : "") + "</details>") + "</div>";
+      (q.theme_link && !/^none\b/i.test(q.theme_link) ? '<p class="small dim">Link to the theme: ' + esc(q.theme_link) + "</p>" : "") + "</details>") + "</div>";
 }
 function scoreLine(s) {
   const c = score(s);
@@ -816,8 +865,11 @@ function viewSession(s) {
   if (U.noQuestions) h += '<div class="card callout"><strong>No new questions available.</strong><p>Check your key or try again later.</p></div>';
   if (U.needKey) h += keyCallout();
   if (s.stage === "done") return h + viewEnd(s);
-  for (let i = 0; i < s.shown; i++) h += questionCard(s, i);
-  if (s.stage === "guess") return h + viewGuess(s);
+  let cards = "";
+  for (let i = 0; i < s.shown; i++) cards += questionCard(s, i);
+  // At the guess stage the theme question comes FIRST, with your questions and links below it.
+  if (s.stage === "guess") return h + viewGuess(s) + '<h3>Your questions and links</h3>' + cards;
+  h += cards;
   const last = s.shown - 1, answered = !!s.answers[last];
   h += '<div class="card"><div class="row">';
   if (answered) h += last < s.questions.length - 1 ? '<button class="btn primary" data-act="next" data-sid="' + s.id + '">Next question</button>' : '<button class="btn primary" data-act="finish" data-sid="' + s.id + '">' + (s.theme ? "Finish and guess the theme" : "See results") + "</button>";
@@ -826,8 +878,9 @@ function viewSession(s) {
 }
 function viewGuess(s) {
   return '<div class="card callout"><h2>What was today\'s theme?</h2><p>Each session has a hidden theme linking its questions. It could be a year, a place, a person, a number or a word. Have a guess.</p>' +
-    '<input type="text" id="guessInput" placeholder="Your guess" autocomplete="off">' +
-    '<button class="btn primary" data-act="reveal" data-sid="' + s.id + '">Reveal the theme</button><button class="btn" data-act="reveal-skip" data-sid="' + s.id + '">Skip the guess</button></div>';
+    '<input type="text" id="guessInput" placeholder="Your guess" autocomplete="off" value="' + esc(U.guessDraft || "") + '">' +
+    '<button class="btn primary" data-act="reveal" data-sid="' + s.id + '">Reveal the theme</button><button class="btn" data-act="reveal-skip" data-sid="' + s.id + '">Skip the guess</button>' +
+    '<p class="small dim" style="margin-bottom:0">Your questions, answers and links are just below if you want to look at them first.</p></div>';
 }
 function viewEnd(s) {
   let h = "";
@@ -1046,7 +1099,10 @@ document.addEventListener("click", e => {
   }
 });
 document.addEventListener("toggle", e => { const d = e.target; if (d && d.dataset && d.dataset.pastid) U.pastOpen[d.dataset.pastid] = d.open; }, true);
-document.addEventListener("input", e => { if (e.target.id === "flagNote" && U.flag) U.flag.note = e.target.value; });
+document.addEventListener("input", e => {
+  if (e.target.id === "flagNote" && U.flag) U.flag.note = e.target.value;
+  if (e.target.id === "guessInput") U.guessDraft = e.target.value;   // survives a flag or save tap further down the page
+});
 
 /* =========================================================================
    GO

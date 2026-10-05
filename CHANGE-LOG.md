@@ -2,6 +2,21 @@
 
 Newest first. Times are Melbourne time. "Local only" means not yet on GitHub.
 
+## v1.1: 5 Oct 2026, about 17:30. Pushed to GitHub (main) as "Theme guess comes first, cryptic themes, and a proper favicon"
+
+**What changed:**
+- **End of a session:** the theme guess box now comes first, with your questions, answers and links underneath it. The page no longer jumps you to the top of a long list. A guess you have typed is kept if you tap Save or Flag on a question below it.
+- **Themes are now cryptic, not restrictive.** The AI is told to prefer a loose, indirect theme; to never use a counting number as the theme ("twelve" and "seven" are out); to never put the theme in a question or option or make it an answer; to link only about 7 of the 10 questions and mark the rest "none"; and to avoid the last 25 themes used. The page also enforces the main rule itself: any question that contains the theme (including "12" versus "twelve") is thrown out and a replacement is asked for. The end screen says "Fits N of 10" when not every question links.
+- **Starter bank:** question wording no longer contains the year or word that is its theme, and bank themes ignore any question that gives its tag away (see `LINK-CHECKS.md`). Facts and sources are unchanged.
+- **Favicon:** there was only an emoji hidden in the page code, which many phone browsers ignore. Now there are proper icon files (an amber square with a white question mark) for browser tabs, the home screen and bookmarks.
+- **A waiting session prepared under the old rules is discarded** (once, automatically), so you won't get a third "twelve". It costs about 8 cents to prepare a new one.
+
+**Why:** your feedback after testing v1.0 on your phone.
+
+**Files touched:** `index.html`, `questions-bank.js`, `LINK-CHECKS.md` (changed); `favicon.svg`, `favicon.ico`, `favicon-32.png`, `icon-192.png`, `apple-touch-icon.png` (new); `DESIGN-LOG.md`, `CHANGE-LOG.md`.
+
+**Tested:** in a browser here with a pretend AI. Guess box first; guess kept after a Save tap; icon files all load; the pretend AI chose "twelve" and wrote five questions containing it, and all five were thrown out and replaced; past themes and the new rules appear in the prompt; the old waiting session was dropped. **Not tested:** a real AI session under the new prompt. How well the real AI follows "cryptic, loose" is the thing to judge on your phone.
+
 ## v1.0: 5 Oct 2026, about 16:00. Pushed to GitHub (main) as "First version of the daily quiz"
 
 **What changed:** Built the quiz. The page (`index.html`) now runs a 10-question session one question at a time, with a hidden theme to guess at the end, Don't know, Finish early, Flag, Save, past sessions, a Flagged list, flag export, backup and restore, a clear-all button with warnings, and a settings page with the key, bank level and a spend guide. New questions come from Perplexity (`openai/gpt-6-luna`) using the stricter prompt from the tests ("write 14, keep the best 10", real search-result links only, repeat checks). One prepared session is kept waiting in browser storage so "Start new session" is instant, and it survives reloads. The 30-question starter bank is in `questions-bank.js`, and every link in it was opened and read (`LINK-CHECKS.md`). The bank is topped back up to 30 in the background.

@@ -16,7 +16,7 @@ window.QUIZ_STARTER_BANK = [
   {
     id: "s01",
     topic: "History > Australian",
-    question: "Australia's wild rabbit plague is traced to a release in 1859 on which property in Victoria?",
+    question: "Australia's wild rabbit plague is traced to a release on which Victorian property?",
     options: ["Rippon Lea", "Barwon Park", "Werribee Park", "Como House"],
     correct: "Barwon Park",
     explanation: "Thomas Austin released rabbits for hunting at Barwon Park, near Winchelsea, in October 1859. A 2022 genetic study traced Australia's feral rabbits back to one batch of English rabbits.",
@@ -31,7 +31,7 @@ window.QUIZ_STARTER_BANK = [
   {
     id: "s02",
     topic: "Space, physics and chemistry > Solar physics",
-    question: "The huge solar storm of 1859 that disrupted telegraphs across Europe and North America is named after which English astronomer?",
+    question: "A huge solar storm in the mid-1800s disrupted telegraphs across Europe and North America. It is named after which English astronomer?",
     options: ["Edmond Halley", "Richard Carrington", "William Herschel", "Norman Lockyer"],
     correct: "Richard Carrington",
     explanation: "Richard Carrington recorded a very bright solar flare on 1 September 1859. A giant geomagnetic storm followed, and telegraph systems in Europe and North America failed, sometimes giving operators electric shocks.",
@@ -61,7 +61,7 @@ window.QUIZ_STARTER_BANK = [
   {
     id: "s04",
     topic: "Inventions and how things work > Engineering",
-    question: "Work on the Suez Canal began in 1859. In which year did it officially open?",
+    question: "In which year did the Suez Canal officially open?",
     options: ["1862", "1869", "1875", "1882"],
     correct: "1869",
     explanation: "Digging began at Port Said on 25 April 1859, and the canal officially opened on 17 November 1869. French diplomat Ferdinand de Lesseps formed the company that built it.",
@@ -76,7 +76,7 @@ window.QUIZ_STARTER_BANK = [
   {
     id: "s05",
     topic: "Music > Harmony",
-    question: "Wagner's opera Tristan und Isolde, finished in 1859, is famous for the \"Tristan chord\". Which notes make it up?",
+    question: "Wagner's opera Tristan und Isolde is famous for the \"Tristan chord\". Which notes make it up?",
     options: ["F, B, D♯ and G♯", "C, E, G and B♭", "D, F♯, A and C", "F, A, C and E♭"],
     correct: "F, B, D♯ and G♯",
     explanation: "The Tristan chord is built from the notes F, B, D♯ and G♯. It is heard at the start of Wagner's opera Tristan und Isolde.",
@@ -91,22 +91,22 @@ window.QUIZ_STARTER_BANK = [
   {
     id: "s06",
     topic: "Politics, law and government > Australian colonies",
-    question: "Queen Victoria signed the Letters Patent that created the colony of Queensland on 6 June of which year?",
-    options: ["1851", "1859", "1863", "1901"],
-    correct: "1859",
+    question: "Letters Patent signed by Queen Victoria on 6 June created the colony of Queensland. Which colony was it separated from?",
+    options: ["South Australia", "Western Australia", "New South Wales", "Van Diemen's Land"],
+    correct: "New South Wales",
     explanation: "Queen Victoria signed the Letters Patent at Osborne House on 6 June 1859, creating Queensland and separating it from New South Wales.",
     extra_fact: "Queensland Day is celebrated every year on 6 June, the anniversary of that signing.",
     sources: [
       { site: "Wikipedia", url: "https://en.wikipedia.org/wiki/Separation_of_Queensland" },
       { site: "Queensland State Archives", url: "https://blogs.archives.qld.gov.au/2020/06/05/why-do-we-celebrate-queensland-day-on-6-june/" }
     ],
-    fingerprint: "Australian colonies: Queensland created by Letters Patent 6 June 1859",
+    fingerprint: "Australian colonies: Queensland separated from New South Wales by Letters Patent 1859",
     tags: ["1859", "Queensland", "Queen Victoria"]
   },
   {
     id: "s07",
     topic: "Space, physics and chemistry > Space exploration",
-    question: "For most of the Apollo 11 moonwalk broadcast in 1969, NASA used TV pictures received by which Australian radio telescope?",
+    question: "For most of the Apollo 11 moonwalk broadcast, NASA used TV pictures received by which Australian radio telescope?",
     options: ["Mount Stromlo", "Molonglo", "Parkes", "Narrabri"],
     correct: "Parkes",
     explanation: "Honeysuckle Creek near Canberra picked up the first pictures. A little under nine minutes in, NASA switched to the better Parkes signal and stayed with it for the rest of the 2½-hour broadcast.",
@@ -122,7 +122,7 @@ window.QUIZ_STARTER_BANK = [
   {
     id: "s08",
     topic: "Internet and pop culture > Internet history",
-    question: "In October 1969 the first message sent over ARPANET, an ancestor of the internet, crashed while someone was typing \"login\". Which two letters arrived?",
+    question: "The first message sent over ARPANET, an ancestor of the internet, crashed while someone was typing \"login\". Which two letters arrived?",
     options: ["HI", "OK", "GO", "LO"],
     correct: "LO",
     explanation: "On 29 October 1969 a UCLA student, Charley Kline, tried to log in to a computer at Stanford Research Institute. The system crashed after two letters, so the first message was \"lo\".",
@@ -137,7 +137,7 @@ window.QUIZ_STARTER_BANK = [
   {
     id: "s09",
     topic: "Music > Festivals",
-    question: "The 1969 Woodstock festival was not held in the town of Woodstock. Where was it held?",
+    question: "The famous Woodstock music festival was not held in the town of Woodstock. Where was it held?",
     options: ["Saugerties, New York", "Altamont, California", "Bethel, New York", "Monterey, California"],
     correct: "Bethel, New York",
     explanation: "Woodstock ran from 15 to 18 August 1969 on Max Yasgur's dairy farm in Bethel, New York.",
@@ -152,7 +152,7 @@ window.QUIZ_STARTER_BANK = [
   {
     id: "s10",
     topic: "Inventions and how things work > Aviation",
-    question: "Concorde's very first flight took off on 2 March 1969 from which city?",
+    question: "Concorde's very first flight, by the French-built prototype 001, took off from which city?",
     options: ["Bristol", "Paris", "Farnborough", "Toulouse"],
     correct: "Toulouse",
     explanation: "The French-built prototype, 001, made its first flight from Toulouse, piloted by André Turcat.",
@@ -167,7 +167,7 @@ window.QUIZ_STARTER_BANK = [
   {
     id: "s11",
     topic: "Books, words and language > Children's books",
-    question: "Eric Carle's The Very Hungry Caterpillar (1969) began as a story about a different creature. What was it?",
+    question: "Eric Carle's The Very Hungry Caterpillar began as a story about a different creature. What was it?",
     options: ["A snail called Sid", "A bookworm called Willi", "A hungry spider", "A greedy goat"],
     correct: "A bookworm called Willi",
     explanation: "Carle first wrote \"A Week with Willi the Worm\", inspired by punching holes in paper. His editor, Ann Beneduce, thought a worm was not very appealing and suggested a caterpillar.",
