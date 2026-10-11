@@ -2,6 +2,16 @@
 
 Newest first. Times are Melbourne time. "Local only" means not yet on GitHub.
 
+## v1.4: 12 Oct 2026, about 17:00. Pushed to GitHub (main) as "Quiz: shorten the button delay to 240 ms"
+
+**What changed:** the pause between tapping a button and the action running is now 240 milliseconds instead of 450, so the quiz feels quicker. This includes tapping an answer. The light sweep still plays, but only the first part of it shows before the page redraws. It is one number, `SWEEP_HOLD_MS`, at the end of the page.
+
+**Why:** TJ asked for the delay to be shortened in all his tools.
+
+**Files touched:** `index.html`, `CHANGE-LOG.md`, `DESIGN-LOG.md`.
+
+**What was tested, and what was not.** Only the number changed, and the page's scripts still parse. Not tested on a phone.
+
 ## v1.3: 12 Oct 2026, about 00:10. Pushed to GitHub (main) as "Quiz: fix stray backslash-n in explanations and refresh the icon cache"
 
 **What changed:** fixed a stray "
@@ -19,7 +29,7 @@ Newest first. Times are Melbourne time. "Local only" means not yet on GitHub.
 
 **What changed:** the page now uses TJ's Deep Jade theme (from `deep-jade-theme.md`). Only how it looks changed. No question, answer, flag, save, backup or AI logic was touched.
 - **Look:** black page in dark mode, silver in light mode (follows the phone's setting). Cards, buttons, typing boxes, tabs and the answer rows all use the theme's colours, corners and spacing. The old amber is gone.
-- **Buttons:** the main action on each screen (Start new session, Next question, Save key, Reveal the theme, Save flag and so on) is a jade button. Everything else is a smoky quartz button. A tap now plays the theme's light sweep, and the action runs a moment later (450 milliseconds) because this page redraws on every tap. That includes tapping an answer.
+- **Buttons:** the main action on each screen (Start new session, Next question, Save key, Reveal the theme, Save flag and so on) is a jade button. Everything else is a smoky quartz button. A tap now plays the theme's light sweep, and the action runs a moment later (240 milliseconds) because this page redraws on every tap. That includes tapping an answer.
 - **Answers:** before you answer, the four options and "Don't know" are quartz buttons. After you answer, the correct one turns jade-green with a tick and the words "Correct answer"; your own wrong pick gets a jade outline and "Your answer".
 - **Messages:** "No new questions available", "saved data could not be read" and "browser would not save" are now banners with an icon and a word (Warning or Error). The short notes such as "Key saved" and "New AI questions weren't available" stay as plain notes.
 - **Font:** Inter Tight is built into the page (about 63 kB) with its licence text, so it needs no internet.

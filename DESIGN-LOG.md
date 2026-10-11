@@ -77,4 +77,4 @@ A single standalone page (`index.html`) hosted on GitHub Pages from its own repo
 - **Notes like "Key saved" and the question-bank fallback note** stay as plain notes, not coloured banners, because one note slot carries both good and bad news and the page would have to guess which. TJ agreed to leave them.
 - **Links** are the theme's text colour with a jade underline (the theme has no link colour, and green text is too faint for small text). TJ asked for the green underline.
 - **Icon:** TJ chose a jade question mark on the black tile; the five icon files were redrawn to match. The apple-touch-icon is the 192 px picture scaled to 180 px on black.
-- **Sweep delay:** every tap waits 450 ms so the sweep shows, including answer taps. It can be set to 0 (`SWEEP_HOLD_MS`, end of the page) if it feels slow on a phone.
+- **Sweep delay:** every tap waits 240 ms so the sweep shows, including answer taps. It can be set to 0 (`SWEEP_HOLD_MS`, end of the page) if it feels slow on a phone.
