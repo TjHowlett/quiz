@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Daily Quiz</title>
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
-<link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
-<link rel="shortcut icon" href="favicon.ico">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32">
+<link rel="icon" href="icon-192.png?v=2" type="image/png" sizes="192x192">
+<link rel="shortcut icon" href="favicon.ico?v=2">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <style>
 /* Inter Tight (variable, Latin subset) - embedded under the SIL Open Font License 1.1.
    Source: Fontsource package @fontsource-variable/inter-tight.
@@ -916,7 +916,11 @@ function parseJson(text) {
   if (a >= 0 && b > a) { try { return JSON.parse(t.slice(a, b + 1)); } catch (e) {} }
   return null;
 }
-function str(x) { return typeof x === "string" ? x.trim() : ""; }
+// The AI sometimes writes a stray backslash-n (the two characters \ and n) between sentences instead of a space.
+// This turns those into spaces, and is also used when showing text saved before this fix.
+function unstray(s) { return s.replace(/\s*\\n\s*/g, " ").replace(/([.!?])\s*\/n(?=\s*[A-Z])/g, "$1 ").replace(/\s+/g, " ").trim(); }
+function tidy(s) { return unstray(String(s == null ? "" : s)); }
+function str(x) { return typeof x === "string" ? unstray(x) : ""; }
 
 // Turns one raw AI question into a clean one, or null if it isn't good enough.
 function cleanQuestion(raw, realMap, needTags) {
@@ -1174,8 +1178,8 @@ function verdict(a) {
 function feedbackHtml(q, a) {
   return '<div class="fb"><p class="verdict">' + esc(verdict(a)) + "</p>" +
     "<p><strong>Correct answer:</strong> " + esc(q.correct) + "</p>" +
-    "<p>" + esc(q.explanation) + "</p>" +
-    '<p class="worth"><strong>Worth knowing:</strong> ' + esc(q.extra_fact) + "</p>" +
+    "<p>" + esc(tidy(q.explanation)) + "</p>" +
+    '<p class="worth"><strong>Worth knowing:</strong> ' + esc(tidy(q.extra_fact)) + "</p>" +
     '<p class="small dim" style="margin-bottom:0">Sources (open in a new tab)</p>' + linksHtml(q.sources) + "</div>";
 }
 function questionCard(s, i) {
@@ -1202,7 +1206,7 @@ function recapRow(s, i) {
   const q = s.questions[i], a = s.answers[i];
   return '<div class="card"><div class="qmeta"><span>' + (i + 1) + ". " + esc(broadTopic(q.topic)) + " " + resultChip(a) + "</span>" + flagStar(s.id, q) + "</div>" +
     flagPanel(s.id, q.id) + '<p><strong>' + esc(q.question) + "</strong></p><p>Answer: " + esc(q.correct) + "</p>" + linksHtml(q.sources) +
-    (s.compact ? "" : '<details><summary class="small">Explanation and extra fact</summary><p>' + esc(q.explanation) + '</p><p class="worth">' + esc(q.extra_fact) + "</p>" +
+    (s.compact ? "" : '<details><summary class="small">Explanation and extra fact</summary><p>' + esc(tidy(q.explanation)) + '</p><p class="worth">' + esc(tidy(q.extra_fact)) + "</p>" +
       (q.theme_link && !/^none\b/i.test(q.theme_link) ? '<p class="small dim">Link to the theme: ' + esc(q.theme_link) + "</p>" : "") + "</details>") + "</div>";
 }
 function scoreLine(s) {
@@ -1288,7 +1292,7 @@ function viewSaved() {
   if (!list.length) return h + '<p class="dim">Nothing saved yet. Tap ☆ Save on any question.</p>';
   list.forEach(q => {
     h += '<div class="card"><div class="qmeta"><span>' + esc(broadTopic(q.topic)) + '</span><button class="button button--secondary small" data-act="unstar" data-qid="' + q.id + '">★ Remove</button></div>' +
-      "<p><strong>" + esc(q.question) + "</strong></p><p>Answer: " + esc(q.correct) + "</p>" + (q.extra_fact ? '<p class="worth">' + esc(q.extra_fact) + "</p>" : "") + linksHtml(q.sources) + "</div>";
+      "<p><strong>" + esc(q.question) + "</strong></p><p>Answer: " + esc(q.correct) + "</p>" + (q.extra_fact ? '<p class="worth">' + esc(tidy(q.extra_fact)) + "</p>" : "") + linksHtml(q.sources) + "</div>";
   });
   return h;
 }

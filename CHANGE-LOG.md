@@ -2,6 +2,19 @@
 
 Newest first. Times are Melbourne time. "Local only" means not yet on GitHub.
 
+## v1.3: 12 Oct 2026, about 00:10. Local only, nothing committed
+
+**What changed:** fixed a stray "
+" showing at the start of the second sentence in some explanations. The AI sometimes writes that backslash-and-n between sentences instead of a space. New AI text now has it turned into a space as it comes in, and explanations and "Worth knowing" facts already saved on the phone are cleaned when they are shown, so old sessions are fixed too. Real text like AC/DC, TCP/IP and a file path such as C:	emp is left alone.
+
+**Icon cache:** the new jade icon files were on the live site but TJ's browser kept showing the old one, because browsers hold on to icons for a long time. The five icon links in the page now end in `?v=2`, which makes browsers fetch them again. Change the number if the icon ever changes again.
+
+**Why:** TJ spotted it on the live quiz after the theme went on. It was not caused by the theme: the starter bank has none, so it came from AI-written questions.
+
+**Files touched:** `index.html`, `CHANGE-LOG.md`.
+
+**What was tested, and what was not.** Tested with sample sentences (the stray marker, with and without spaces, a "/n" version, and text that must not change), and in a browser by putting a stray marker into one starter question: the explanation showed as a normal sentence. Not tested: a real AI session, and TJ's own phone. If what shows on screen is a slash rather than a backslash, or is somewhere other than explanations, tell me where.
+
 ## v1.2: 11 Oct 2026, about 23:10. Local only, nothing committed
 
 **What changed:** the page now uses TJ's Deep Jade theme (from `deep-jade-theme.md`). Only how it looks changed. No question, answer, flag, save, backup or AI logic was touched.
