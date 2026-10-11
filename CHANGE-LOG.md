@@ -2,7 +2,7 @@
 
 Newest first. Times are Melbourne time. "Local only" means not yet on GitHub.
 
-## v1.3: 12 Oct 2026, about 00:10. Local only, nothing committed
+## v1.3: 12 Oct 2026, about 00:10. Pushed to GitHub (main) as "Quiz: fix stray backslash-n in explanations and refresh the icon cache"
 
 **What changed:** fixed a stray "
 " showing at the start of the second sentence in some explanations. The AI sometimes writes that backslash-and-n between sentences instead of a space. New AI text now has it turned into a space as it comes in, and explanations and "Worth knowing" facts already saved on the phone are cleaned when they are shown, so old sessions are fixed too. Real text like AC/DC, TCP/IP and a file path such as C:	emp is left alone.
@@ -15,7 +15,7 @@ Newest first. Times are Melbourne time. "Local only" means not yet on GitHub.
 
 **What was tested, and what was not.** Tested with sample sentences (the stray marker, with and without spaces, a "/n" version, and text that must not change), and in a browser by putting a stray marker into one starter question: the explanation showed as a normal sentence. Not tested: a real AI session, and TJ's own phone. If what shows on screen is a slash rather than a backslash, or is somewhere other than explanations, tell me where.
 
-## v1.2: 11 Oct 2026, about 23:10. Local only, nothing committed
+## v1.2: 11 Oct 2026, about 23:10. Pushed to GitHub (main) as "Apply the Deep Jade theme to the quiz, with a jade question mark icon"
 
 **What changed:** the page now uses TJ's Deep Jade theme (from `deep-jade-theme.md`). Only how it looks changed. No question, answer, flag, save, backup or AI logic was touched.
 - **Look:** black page in dark mode, silver in light mode (follows the phone's setting). Cards, buttons, typing boxes, tabs and the answer rows all use the theme's colours, corners and spacing. The old amber is gone.
@@ -29,7 +29,7 @@ Newest first. Times are Melbourne time. "Local only" means not yet on GitHub.
 
 **Links:** the source links and the "Add note" and "Finish early" links keep the theme's text colour (soft white in dark mode, near-black in light mode) with a jade underline.
 
-**Why:** TJ asked for the theme to be applied to the quiz.
+**Why:** TJ asked for the theme to be applied to the quiz. TJ checked it live: the theme and the new icon work (after the icon cache fix in v1.3).
 
 **Files touched:** `index.html`, the five icon files, `CHANGE-LOG.md`, `DESIGN-LOG.md`.
 
