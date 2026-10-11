@@ -2,6 +2,26 @@
 
 Newest first. Times are Melbourne time. "Local only" means not yet on GitHub.
 
+## v1.2: 11 Oct 2026, about 23:10. Local only, nothing committed
+
+**What changed:** the page now uses TJ's Deep Jade theme (from `deep-jade-theme.md`). Only how it looks changed. No question, answer, flag, save, backup or AI logic was touched.
+- **Look:** black page in dark mode, silver in light mode (follows the phone's setting). Cards, buttons, typing boxes, tabs and the answer rows all use the theme's colours, corners and spacing. The old amber is gone.
+- **Buttons:** the main action on each screen (Start new session, Next question, Save key, Reveal the theme, Save flag and so on) is a jade button. Everything else is a smoky quartz button. A tap now plays the theme's light sweep, and the action runs a moment later (450 milliseconds) because this page redraws on every tap. That includes tapping an answer.
+- **Answers:** before you answer, the four options and "Don't know" are quartz buttons. After you answer, the correct one turns jade-green with a tick and the words "Correct answer"; your own wrong pick gets a jade outline and "Your answer".
+- **Messages:** "No new questions available", "saved data could not be read" and "browser would not save" are now banners with an icon and a word (Warning or Error). The short notes such as "Key saved" and "New AI questions weren't available" stay as plain notes.
+- **Font:** Inter Tight is built into the page (about 63 kB) with its licence text, so it needs no internet.
+- **Small renames:** the page's own `.row`, `.btn` and `.opt` style names were changed so they don't clash with the theme. The quiz's own layout is the same.
+
+**Icon:** TJ chose a jade question mark on the black tile. All five icon files (`favicon.svg`, `favicon-32.png`, `favicon.ico`, `icon-192.png`, `apple-touch-icon.png`) were redrawn, replacing the amber square. The same symbol is recorded in `deep-jade-theme.md`.
+
+**Links:** the source links and the "Add note" and "Finish early" links keep the theme's text colour (soft white in dark mode, near-black in light mode) with a jade underline.
+
+**Why:** TJ asked for the theme to be applied to the quiz.
+
+**Files touched:** `index.html`, the five icon files, `CHANGE-LOG.md`, `DESIGN-LOG.md`.
+
+**What was tested, and what was not.** Tested in a browser on this PC at phone size, in light and dark, using the question bank (no AI key): the home screen, a session, a right-and-wrong answer, the flag panel with a reason and note, finish early and the theme guess box, the Settings screen, the Clear all data box, the sweep and its delay, and that the page's scripts load with no errors. Not tested: the real AI key, a real phone, mouse hover, keyboard Tab rings, and the Saved, Past and Flagged screens after real use. The two warning and error banners other than "No new questions" were checked as shapes, not triggered for real.
+
 ## v1.1: 5 Oct 2026, about 17:30. Pushed to GitHub (main) as "Theme guess comes first, cryptic themes, and a proper favicon"
 
 **What changed:**
