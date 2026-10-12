@@ -78,3 +78,5 @@ A single standalone page (`index.html`) hosted on GitHub Pages from its own repo
 - **Links** are the theme's text colour with a jade underline (the theme has no link colour, and green text is too faint for small text). TJ asked for the green underline.
 - **Icon:** TJ chose a jade question mark on the black tile; the five icon files were redrawn to match. The apple-touch-icon is the 192 px picture scaled to 180 px on black.
 - **Sweep delay:** every tap waits 240 ms so the sweep shows, including answer taps. It can be set to 0 (`SWEEP_HOLD_MS`, end of the page) if it feels slow on a phone.
+
+**12 Oct 2026, about 18:00 (Melbourne).** The quiz is now linked from TJ's "My Coaches" homepage (https://tjhowlett.github.io/tutors/), in the Mind and Body section, with its jade question mark icon (tutors repo commit 45cf36e). This replaces the 5 Oct note above ("no link from the tutors index page"): TJ asked for it. Nothing in the quiz itself changed. The button delay is now 240 ms (v1.4 in CHANGE-LOG.md).
