@@ -2,6 +2,16 @@
 
 Newest first. Times are Melbourne time. "Local only" means not yet on GitHub.
 
+## v1.5: 19 Oct 2026, about 13:30. Pushed to GitHub (main) as "Quiz: light icon (mint question mark on a light tile)"
+
+**What changed:** the five icon files were redrawn as a light icon: a mint question mark with a white reflection line, on a pale jade tile with a jade outline. This replaces the jade question mark on the black tile. It matches Jasmin's stretching icon style, which was already light. Only the icon files changed. The page itself only has the icon links bumped to `?v=3` so browsers fetch the new files.
+
+**Why:** TJ asked for all the tool icons (except Jasmin's) to be light. He approved the proposed icons on 19 Oct 2026.
+
+**Files touched:** `favicon.svg`, `favicon-32.png`, `favicon.ico`, `icon-192.png`, `apple-touch-icon.png`, `index.html` (the five `?v=2` tags became `?v=3`), `CHANGE-LOG.md`, `DESIGN-LOG.md`.
+
+**What was tested, and what was not.** The icons were rendered and looked at at 16, 32, 48, 180 and 192 px on a dark and a light tab strip. The apple-touch-icon is now drawn square and filled to the edges at 180 px (it used to be the 192 px picture scaled down on black), so phones round the corners themselves. Not tested: how it looks on TJ's phone home screen or desktop shortcut.
+
 ## v1.4: 12 Oct 2026, about 17:00. Pushed to GitHub (main) as "Quiz: shorten the button delay to 240 ms"
 
 **What changed:** the pause between tapping a button and the action running is now 240 milliseconds instead of 450, so the quiz feels quicker. This includes tapping an answer. The light sweep still plays, but only the first part of it shows before the page redraws. It is one number, `SWEEP_HOLD_MS`, at the end of the page.

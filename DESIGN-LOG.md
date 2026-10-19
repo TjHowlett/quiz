@@ -80,3 +80,8 @@ A single standalone page (`index.html`) hosted on GitHub Pages from its own repo
 - **Sweep delay:** every tap waits 240 ms so the sweep shows, including answer taps. It can be set to 0 (`SWEEP_HOLD_MS`, end of the page) if it feels slow on a phone.
 
 **12 Oct 2026, about 18:00 (Melbourne).** The quiz is now linked from TJ's "My Coaches" homepage (https://tjhowlett.github.io/tutors/), in the Mind and Body section, with its jade question mark icon (tutors repo commit 45cf36e). This replaces the 5 Oct note above ("no link from the tutors index page"): TJ asked for it. Nothing in the quiz itself changed. The button delay is now 240 ms (v1.4 in CHANGE-LOG.md).
+
+**19 Oct 2026, about 13:30 (Melbourne).** The icon is now light (see CHANGE-LOG v1.5). TJ approved light icons for all his tools except Jasmin's. This replaces the jade-on-black question mark from 11 Oct. Decisions made while doing it:
+- **Look:** pale jade tile (#CFE3DB) with a jade outline (#34705E), a mint stone question mark with a jade outline, and a white reflection line. The reflection first looked odd on the palest fill, so the mint was deepened until the white line shows.
+- **Home screen icon:** square, filled to the edges, 180 px (before: the 192 px picture on black). The tab and shortcut icons keep rounded corners.
+- **Cache tag:** `?v=2` became `?v=3`.
